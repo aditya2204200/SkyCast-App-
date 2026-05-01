@@ -1,43 +1,88 @@
+const getWeather = async (city) => {
+  try {
+    const geoRes = await fetch(
+      `https://geocoding-api.open-meteo.com/v1/search?name=${city}`,
+    );
+    const geoData = await geoRes.json();
 
-// const url =
-//   "https://weather-by-api-ninjas.p.rapidapi.com/v1/weather?city=Seattle";
+    if (!geoData.results || geoData.results.length === 0) {
+      document.getElementById("errorMsg").innerText =
+        "❌ Location not found. Please enter correct name.";
+      return;
+    }
 
-// const options = {
-//   method: "GET",
-//   headers: {
-//     "x-rapidapi-key": "YOUR_API_KEY",
-//     "x-rapidapi-host": "weather-by-api-ninjas.p.rapidapi.com",
-//   },
-// };
+    const input = city.toLowerCase().trim();
 
-// async function getWeather() {
-//   try {
-//     const response = await fetch(url, options);
-//     const result = await response.json(); // better than text()
-//     console.log(result);
-//   } catch (error) {
-//     console.error(error);
-//   }
-// }
+    // 🔥 SMART MATCH
+    let matched = geoData.results.find(
+      (item) =>
+        item.name.toLowerCase() === input ||
+        item.admin1?.toLowerCase() === input,
+    );
 
-// getWeather();
+    // ❌ agar kuch bhi match nahi hua
+    if (!matched) {
+      document.getElementById("errorMsg").innerText =
+        "❌ Please enter correct spelling (e.g., Delhi, Bihar).";
+      return;
+    }
 
-const url =
-  "https://weather-by-api-ninjas.p.rapidapi.com/v1/weather?city=Bihar";
-const options = {
-  method: "GET",
-  headers: {
-    "x-rapidapi-key": "08123f37bbmshb9fc1144b975955p13b26fjsn68f6c86c2d8a",
-    "x-rapidapi-host": "weather-by-api-ninjas.p.rapidapi.com",
-    "Content-Type": "application/json",
-  },
+    // ❌ short input reject (bhr)
+    if (input.length < 3) {
+      document.getElementById("errorMsg").innerText =
+        "❌ Please enter full name.";
+      return;
+    }
+
+    // Clear error
+    document.getElementById("errorMsg").innerText = "";
+
+    const lat = matched.latitude;
+    const lon = matched.longitude;
+
+    // Weather API
+    const res = await fetch(
+      `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true&hourly=relativehumidity_2m`,
+    );
+    const data = await res.json();
+
+    // UI update
+    document.getElementById("cityName").innerText = matched.name;
+
+    document.getElementById("temp").innerText =
+      data.current_weather.temperature + " °C";
+
+    document.getElementById("wind").innerText =
+      data.current_weather.windspeed + " km/h";
+
+    document.getElementById("wind_dir").innerText =
+      data.current_weather.winddirection + "°";
+
+    // Humidity correct
+    const timeIndex = data.hourly.time.indexOf(data.current_weather.time);
+
+    let humidity = "--";
+    if (timeIndex !== -1) {
+      humidity = data.hourly.relativehumidity_2m[timeIndex];
+    }
+
+    document.getElementById("humidity").innerText = humidity + " %";
+
+    // Alert
+    if (humidity !== "--" && humidity > 70) {
+      alert("⚠️ High humidity! It may feel uncomfortable outside.");
+    }
+  } catch (error) {
+    console.error(error);
+  }
 };
 
-try {
-  const response = await fetch(url, options);
-  const result = await response.text();
-  console.log(result);
-} catch (error) {
-  console.error(error);
-}
+// Default
+getWeather("Delhi");
 
+// Search
+document.getElementById("searchForm").addEventListener("submit", (e) => {
+  e.preventDefault();
+  const city = document.getElementById("city").value;
+  getWeather(city);
+});
