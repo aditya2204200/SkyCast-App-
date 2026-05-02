@@ -1,0 +1,254 @@
+html {
+  scroll-behavior: smooth;
+}
+
+ .container {
+  margin-top: 80px;
+}
+
+.navbar-brand img {
+  border-radius: 50%; /* round logo */
+}
+ /*==========================Logo=============*/
+.navbar-brand img {
+  box-shadow: 0 0 10px rgba(255,255,255,0.5);
+}
+
+/* 🌌 Background */
+.bg-fixed {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+
+  background-size: 110%; /* thoda zoom for movement */
+  background-position: center;
+  background-repeat: no-repeat;
+
+  animation: bgMove 30s linear infinite;
+}
+@keyframes bgMove {
+  0% {
+    background-position: center top;
+  }
+  50% {
+    background-position: center bottom;
+  }
+  100% {
+    background-position: center top;
+  }
+}
+
+/* 💎 Glass Cards (DAY MODE) */
+.card {
+  background: rgba(255, 255, 255, 0.2) !important;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+
+  border-radius: 15px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+
+  color: #000;
+}
+
+/* Card header */
+.card-header {
+  background: rgba(255, 255, 255, 0.3) !important;
+  border-bottom: none;
+  color: #000;
+}
+
+/* 🌐 Navbar (DAY MODE) */
+.navbar {
+  background: rgba(255, 255, 255, 0.3) !important;
+  backdrop-filter: blur(10px);
+}
+
+/* 🌅 Background images */
+.bg-morning {
+  background-image: url(morning.png);
+}
+
+.bg-afternoon {
+  background-image: url(afternoon_img.png);
+}
+
+.bg-evening {
+  background-image: url(evening.png);
+}
+
+.bg-night {
+  background-image: url(night.png);
+}
+
+/* ========================= */
+/* 🌙 NIGHT MODE START */
+/* ========================= */
+
+body.night-mode {
+  color: #ffffff;
+}
+
+/* 🔥 Sab text pure white */
+body.night-mode h1,
+body.night-mode h2,
+body.night-mode h4,
+body.night-mode p,
+body.night-mode span,
+body.night-mode div {
+  color: #ffffff !important;
+}
+
+/* 💎 Cards dark (contrast fix) */
+body.night-mode .card {
+  background: rgba(0, 0, 0, 0.7) !important;
+  color: #ffffff !important;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Card header dark */
+body.night-mode .card-header {
+  background: rgba(0, 0, 0, 0.6) !important;
+  color: #ffffff !important;
+}
+
+/* 🌐 Navbar dark */
+body.night-mode .navbar {
+  background: rgba(0, 0, 0, 0.6) !important;
+}
+
+body.night-mode .navbar a {
+  color: #ffffff !important;
+}
+
+/* 🔍 Input fields */
+body.night-mode input {
+  background: rgba(255, 255, 255, 0.15) !important;
+  color: #ffffff !important;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+/* ✨ Heading visibility boost */
+body.night-mode h1,
+body.night-mode h2 {
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.6);
+}
+
+/* ========================= */
+/* 🌙 NIGHT MODE END */
+/* ========================= */
+
+
+
+
+/* =================================rain==============================*/
+
+.rain {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.drop {
+  position: absolute;
+  bottom: 100%;
+  width: 2px;
+  height: 20px;
+  background: rgba(255,255,255,0.6);
+  animation: fall linear infinite;
+}
+
+@keyframes fall {
+  to {
+    transform: translateY(100vh);
+  }
+}
+
+
+
+
+/*========================================= For Navbar ======================================*/
+/* 📌 Default navbar */
+.navbar {
+  transition: all 0.3s ease;
+  padding: 15px 20px;
+}
+
+/* 🔽 Shrink state */
+.navbar.shrink {
+  padding: 5px 20px;
+  background: rgba(0, 0, 0, 0.7) !important; /* dark glass */
+  backdrop-filter: blur(10px);
+}
+.navbar-brand {
+  transition: 0.3s;
+  font-size: 1.5rem;
+}
+
+.navbar.shrink .navbar-brand {
+  font-size: 1.2rem;
+}
+
+
+
+/*==========================Usage Guide===============================*/
+/* 🌙 Usage Guide fix (night mode) */
+body.night-mode #usage .bg-light {
+  background: rgba(0, 0, 0, 0.6) !important;
+}
+
+body.night-mode #usage h5,
+body.night-mode #usage p {
+  color: #ffffff !important;
+}
+
+
+/*=============================Ligktining========================*/
+/* ⚡ Lightning Effect */
+.lightning {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.flash {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: white;
+  opacity: 0;
+  animation: flash 0.2s ease-in-out;
+}
+
+@keyframes flash {
+  0% { opacity: 0; }
+  50% { opacity: 0.8; }
+  100% { opacity: 0; }
+}
+
+/*======================Some other place*===========================*/
+.dynamic-table {
+  background-color: rgba(0, 123, 255, 0.5);
+  padding: 10px;
+  border-radius: 10px;
+}
+
+/* table ke andar */
+.dynamic-table th,
+.dynamic-table td {
+  color: white;
+  background-color: transparent;
+}
+
+
