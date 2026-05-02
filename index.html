@@ -10,74 +10,18 @@
       integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB"
       crossorigin="anonymous"
     />
-    <style>
-     .bg-fixed {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: -1;
-
-  background-size: cover;       /* 🔥 full screen */
-  background-position: center;  /* center align */
-  background-repeat: no-repeat; /* ❌ repeat band */
-
-  transition: background-image 0.5s ease-in-out;
-}
-.card {
-  background: rgba(255, 255, 255, 0.15) !important;
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-
-  border-radius: 15px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  color: #000;
-}
-
-/* Card header bhi transparent */
-.card-header {
-  background: rgba(255, 255, 255, 0.2) !important;
-  border-bottom: none;
-}
-
-/* Navbar thoda glassy */
-.navbar {
-  background: rgba(255, 255, 255, 0.2) !important;
-  backdrop-filter: blur(10px);
-}
-
-/* Text visibility improve */
-h1, h2, h4, p {
-  color: #000;
-}
-
-.bg-morning {
-  background-image: url(morning.png);
-}
-
-/* ☀️ Afternoon */
-.bg-afternoon {
-  background-image: url(afternoon_img.png);
-}
-
-/* 🌇 Evening */
-.bg-evening {
-  background-image: url(evening_img.png);
-}
-
-/* 🌙 Night */
-.bg-night {
-  background-image: url(night.png);
-}
-
-    </style>
+    <link rel="stylesheet" href="style.css">
   </head>
-  <body>
+  <body id="home">
     <div class="bg-fixed"></div>
-    <nav class="navbar navbar-expand-lg bg-body-tertiary">
+    <div class="rain"></div>
+    <div class="lightning"></div>
+    <nav class="navbar navbar-expand-lg fixed-top">
       <div class="container-fluid">
-        <a class="navbar-brand" href="#">SkyCast APP</a>
+        <a class="navbar-brand d-flex align-items-center" href="#home">
+        <img src="logo.png" alt="logo" width="40" height="40" class="me-2">
+        SkyCast
+        </a>
         <button
           class="navbar-toggler"
           type="button"
@@ -92,13 +36,13 @@ h1, h2, h4, p {
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
           <ul class="navbar-nav me-auto mb-2 mb-lg-0">
             <li class="nav-item">
-              <a class="nav-link active" aria-current="page" href="#">Home</a>
+              <a class="nav-link active" href="#home">Home</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="#">About This App</a>
+              <a class="nav-link" href="#about">About This App</a>
             </li>
             <li class="nav-item dropdown">
-              <a
+              <!-- <a
                 class="nav-link dropdown-toggle"
                 href="#"
                 role="button"
@@ -113,9 +57,9 @@ h1, h2, h4, p {
                 <li><hr class="dropdown-divider" /></li>
                 <li><a class="dropdown-item" href="#">Banglore</a></li>
               </ul>
-            </li>
+            </li> -->
             <li class="nav-item">
-              <a class="nav-link disabled" aria-disabled="true">Usage Guide</a>
+              <a class="nav-link" href="#usage">Usage Guide</a>
             </li>
           </ul>
           <form class="d-flex" id="searchForm">
@@ -135,7 +79,7 @@ h1, h2, h4, p {
 
     <div class="container">
       <h1 class="my-4 text-center">
-        Weather for <span id="cityName">Bihar</span>
+        Weather for <span id="cityName"></span>
       </h1>
       <p id="errorMsg" style="color:red; text-align:center;"></p>
       <main>
@@ -170,21 +114,35 @@ h1, h2, h4, p {
 
           <!-- Wind -->
           <div class="col">
-            <div class="card mb-4 rounded-3 shadow-sm border-primary">
-              <div class="card-header py-3 text-bg-primary">
-                <h4>Wind</h4>
-              </div>
-              <div class="card-body">
-                <h1 id="wind">-- km/h</h1>
-                <p>Direction: <span id="wind_dir"></span></p>
-                <p>Condition: <span id="conditions"></span></p>
-              </div>
-            </div>
-          </div>
+  <div class="card mb-4 rounded-3 shadow-sm border-primary">
+    <div class="card-header py-3">
+      <h4>Wind</h4>
+    </div>
+    <div class="card-body">
+      <h1 id="wind">-- km/h</h1>
+      <p>Direction: <span id="wind_dir"></span></p>
+
+      <!-- 🌦️ WEATHER CONDITION (UPDATED) -->
+      <h4 id="conditions" style="margin-top:10px;">--</h4>
+    </div>
+  </div>
+</div>
         </div>
         <h2 class="display-6 text-center mb-4">
           Weather of Other Common Places
         </h2>
+        <div class="container my-4 dynamic-table">
+           <table class="table table-bordered text-center">
+        <thead>
+           <tr>
+           <th>City</th>
+           <th>Temp (°C)</th>
+           <th>Wind (km/h)</th>
+           </tr>
+      </thead>
+    <tbody id="commonWeather"></tbody>
+  </table>
+</div>
         <div class="container my-5">
   <div class="card shadow p-4">
     <h3 class="text-center mb-3">📅 Calendar</h3>
@@ -193,7 +151,139 @@ h1, h2, h4, p {
     </div>
   </div>
 </div>
-        <thead>
+<thead>
+
+  <section id="about" class="container my-5">
+  <div class="card shadow p-4">
+    
+    <h2 class="text-center mb-4">🌦️ About SkyCast</h2>
+
+    <p class="lead text-center">
+      SkyCast is a modern and interactive weather web application designed to deliver
+      real-time weather insights with a clean and visually engaging experience.
+    </p>
+
+    <hr>
+
+    <h4>🚀 Key Features</h4>
+    <ul>
+      <li>🌡️ Real-time temperature, humidity, and wind updates</li>
+      <li>🌗 Dynamic background based on time (morning, afternoon, evening, night)</li>
+      <li>🌙 Automatic dark mode for better night readability</li>
+      <li>🌧️ Animated weather effects like rain</li>
+      <li>🔍 Smart city search with accurate results</li>
+    </ul>
+
+    <hr>
+
+    <h4>🎯 User Experience</h4>
+    <p>
+      The app is designed with a focus on simplicity and clarity. Glassmorphism UI,
+      smooth transitions, and responsive layout ensure a seamless experience across devices.
+    </p>
+
+    <hr>
+
+    <h4>🛠️ Technologies Used</h4>
+    <ul>
+      <li>HTML5, CSS3 (Glass UI & Responsive Design)</li>
+      <li>JavaScript (Dynamic Logic & API Integration)</li>
+      <li>Open-Meteo API (Weather Data)</li>
+      <li>Bootstrap 5 (Layout & Components)</li>
+    </ul>
+
+    <hr>
+
+    <h4>📌 Future Improvements</h4>
+    <ul>
+      <li>📅 5-day / 7-day weather forecast</li>
+      <li>📍 Auto location detection</li>
+      <li>⚡ Lightning & storm animations</li>
+      <li>📱 Progressive Web App (PWA) support</li>
+    </ul>
+
+    <hr>
+
+    <p class="text-center mt-4">
+      💡 Built with passion to make weather information simple, beautiful, and interactive.
+    </p>
+
+  </div>
+</section>
+
+/*==============================usage guide==================*/
+
+<section id="usage" class="container my-5">
+  <div class="card shadow p-4">
+
+    <h2 class="text-center mb-4">📘 How to Use SkyCast</h2>
+
+    <p class="text-center text-muted mb-4">
+      Get accurate weather insights in just a few simple steps
+    </p>
+
+    <div class="row g-4">
+
+      <!-- Step 1 -->
+      <div class="col-md-6">
+        <div class="p-3 h-100 rounded bg-light shadow-sm">
+          <h5>🔍 Search Your City</h5>
+          <p class="mb-0">
+            Type your city name in the search bar and hit the search button to get instant results.
+          </p>
+        </div>
+      </div>
+
+      <!-- Step 2 -->
+      <div class="col-md-6">
+        <div class="p-3 h-100 rounded bg-light shadow-sm">
+          <h5>🌡️ Check Weather Data</h5>
+          <p class="mb-0">
+            View real-time temperature, humidity, wind speed, and direction in a clean layout.
+          </p>
+        </div>
+      </div>
+
+      <!-- Step 3 -->
+      <div class="col-md-6">
+        <div class="p-3 h-100 rounded bg-light shadow-sm">
+          <h5>🌧️ Experience Live Effects</h5>
+          <p class="mb-0">
+            Dynamic rain animation appears automatically when rainy conditions are detected.
+          </p>
+        </div>
+      </div>
+
+      <!-- Step 4 -->
+      <div class="col-md-6">
+        <div class="p-3 h-100 rounded bg-light shadow-sm">
+          <h5>🌙 Smart Theme Switching</h5>
+          <p class="mb-0">
+            The interface automatically adapts between day and night modes based on time.
+          </p>
+        </div>
+      </div>
+
+      <!-- Step 5 -->
+      <div class="col-md-12">
+        <div class="p-3 rounded bg-light shadow-sm">
+          <h5>📅 Use Built-in Calendar</h5>
+          <p class="mb-0">
+            Keep track of dates while checking weather updates with the integrated calendar.
+          </p>
+        </div>
+      </div>
+
+    </div>
+
+    <hr class="my-4">
+
+    <p class="text-center">
+      💡 <strong>Tip:</strong> Enter correct city names (e.g., Delhi, Mumbai) for accurate results.
+    </p>
+
+  </div>
+</section>
 
     <script
       src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
