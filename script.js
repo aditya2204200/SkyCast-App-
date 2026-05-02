@@ -1,5 +1,30 @@
+// 🌤️ Dynamic Background Function
+const setDynamicBackground = () => {
+  const hour = new Date().getHours();
+  const bg = document.querySelector(".bg-fixed");
+
+  if (!bg) return;
+
+  // reset
+  bg.className = "bg-fixed";
+
+  if (hour >= 5 && hour < 11) {
+    bg.classList.add("bg-morning"); // 🌅
+  } else if (hour >= 11 && hour < 16) {
+    bg.classList.add("bg-afternoon"); // ☀️
+  } else if (hour >= 16 && hour < 19) {
+    bg.classList.add("bg-evening"); // 🌇
+  } else {
+    bg.classList.add("bg-night"); // 🌙
+  }
+};
+
+// 🌍 Weather Function
 const getWeather = async (city) => {
   try {
+    // 🔥 background update on every search
+    setDynamicBackground();
+
     const geoRes = await fetch(
       `https://geocoding-api.open-meteo.com/v1/search?name=${city}`,
     );
@@ -13,34 +38,29 @@ const getWeather = async (city) => {
 
     const input = city.toLowerCase().trim();
 
-    // 🔥 SMART MATCH
     let matched = geoData.results.find(
       (item) =>
         item.name.toLowerCase() === input ||
         item.admin1?.toLowerCase() === input,
     );
 
-    // ❌ agar kuch bhi match nahi hua
     if (!matched) {
       document.getElementById("errorMsg").innerText =
         "❌ Please enter correct spelling (e.g., Delhi, Bihar).";
       return;
     }
 
-    // ❌ short input reject (bhr)
     if (input.length < 3) {
       document.getElementById("errorMsg").innerText =
         "❌ Please enter full name.";
       return;
     }
 
-    // Clear error
     document.getElementById("errorMsg").innerText = "";
 
     const lat = matched.latitude;
     const lon = matched.longitude;
 
-    // Weather API
     const res = await fetch(
       `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true&hourly=relativehumidity_2m`,
     );
@@ -58,7 +78,7 @@ const getWeather = async (city) => {
     document.getElementById("wind_dir").innerText =
       data.current_weather.winddirection + "°";
 
-    // Humidity correct
+    // Humidity
     const timeIndex = data.hourly.time.indexOf(data.current_weather.time);
 
     let humidity = "--";
@@ -77,7 +97,10 @@ const getWeather = async (city) => {
   }
 };
 
-// Default
+// 🚀 Page load pe bhi run karo
+setDynamicBackground();
+
+// Default city
 getWeather("Delhi");
 
 // Search
