@@ -1,74 +1,75 @@
-// 🌤️ Dynamic Background Function
+// 🌤️ Dynamic Background
 const setDynamicBackground = () => {
   const hour = new Date().getHours();
   const bg = document.querySelector(".bg-fixed");
+  const body = document.body;
 
   if (!bg) return;
 
-  // reset
   bg.className = "bg-fixed";
+  body.classList.remove("night-mode");
 
   if (hour >= 5 && hour < 11) {
-    bg.classList.add("bg-morning"); // 🌅
+    bg.classList.add("bg-morning");
   } else if (hour >= 11 && hour < 16) {
-    bg.classList.add("bg-afternoon"); // ☀️
+    bg.classList.add("bg-afternoon");
   } else if (hour >= 16 && hour < 19) {
-    bg.classList.add("bg-evening"); // 🌇
+    bg.classList.add("bg-evening");
   } else {
-    bg.classList.add("bg-night"); // 🌙
+    bg.classList.add("bg-night");
+    body.classList.add("night-mode");
   }
 };
 
-// 🌍 Weather Function
-const getWeather = async (city) => {
+// 🌧️ Rain Effect
+const createRain = (count = 100) => {
+  const rainContainer = document.querySelector(".rain");
+  if (!rainContainer) return;
+
+  rainContainer.innerHTML = "";
+
+  for (let i = 0; i < count; i++) {
+    const drop = document.createElement("div");
+    drop.classList.add("drop");
+
+    drop.style.left = Math.random() * 100 + "vw";
+    drop.style.animationDuration = 0.5 + Math.random() * 1 + "s";
+    drop.style.opacity = Math.random();
+
+    rainContainer.appendChild(drop);
+  }
+};
+
+// 🌍 WEATHER BY COORDS
+const getWeatherByCoords = async (lat, lon, cityName) => {
   try {
-    // 🔥 background update on every search
     setDynamicBackground();
-
-    const geoRes = await fetch(
-      `https://geocoding-api.open-meteo.com/v1/search?name=${city}`,
-    );
-    const geoData = await geoRes.json();
-
-    if (!geoData.results || geoData.results.length === 0) {
-      document.getElementById("errorMsg").innerText =
-        "❌ Location not found. Please enter correct name.";
-      return;
-    }
-
-    const input = city.toLowerCase().trim();
-
-    let matched = geoData.results.find(
-      (item) =>
-        item.name.toLowerCase() === input ||
-        item.admin1?.toLowerCase() === input,
-    );
-
-    if (!matched) {
-      document.getElementById("errorMsg").innerText =
-        "❌ Please enter correct spelling (e.g., Delhi, Bihar).";
-      return;
-    }
-
-    if (input.length < 3) {
-      document.getElementById("errorMsg").innerText =
-        "❌ Please enter full name.";
-      return;
-    }
-
-    document.getElementById("errorMsg").innerText = "";
-
-    const lat = matched.latitude;
-    const lon = matched.longitude;
 
     const res = await fetch(
       `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true&hourly=relativehumidity_2m`,
     );
+
     const data = await res.json();
 
-    // UI update
-    document.getElementById("cityName").innerText = matched.name;
+    const weatherCode = data.current_weather.weathercode;
 
+    // 🌧️ Accurate rain codes
+    const rainCodes = [51, 53, 55, 61, 63, 65, 80, 81, 82];
+
+    if (rainCodes.includes(weatherCode)) {
+      createRain(120);
+
+      setInterval(() => {
+        if (Math.random() < 0.4) {
+          createLightning();
+        }
+      }, 3000);
+    } else {
+      document.querySelector(".rain").innerHTML = "";
+    }
+
+    // UI update
+    document.getElementById("cityName").innerText = cityName;
     document.getElementById("temp").innerText =
       data.current_weather.temperature + " °C";
 
@@ -78,34 +79,151 @@ const getWeather = async (city) => {
     document.getElementById("wind_dir").innerText =
       data.current_weather.winddirection + "°";
 
-    // Humidity
+    // humidity
     const timeIndex = data.hourly.time.indexOf(data.current_weather.time);
-
     let humidity = "--";
+
     if (timeIndex !== -1) {
       humidity = data.hourly.relativehumidity_2m[timeIndex];
     }
 
     document.getElementById("humidity").innerText = humidity + " %";
-
-    // Alert
-    if (humidity !== "--" && humidity > 70) {
-      alert("⚠️ High humidity! It may feel uncomfortable outside.");
-    }
-  } catch (error) {
-    console.error(error);
+    document.getElementById("errorMsg").innerText = "";
+  } catch (err) {
+    console.error(err);
+    document.getElementById("errorMsg").innerText = "⚠️ Weather load error";
   }
 };
 
-// 🚀 Page load pe bhi run karo
-setDynamicBackground();
+// 🌍 CITY SEARCH
+const getWeather = async (city) => {
+  try {
+    const geoRes = await fetch(
+      `https://geocoding-api.open-meteo.com/v1/search?name=${city}`,
+    );
 
-// Default city
-getWeather("Delhi");
+    const geoData = await geoRes.json();
 
-// Search
+    if (!geoData.results || geoData.results.length === 0) {
+      document.getElementById("errorMsg").innerText = "❌ City not found";
+      return;
+    }
+
+    const place = geoData.results[0];
+    getWeatherByCoords(place.latitude, place.longitude, place.name);
+  } catch (err) {
+    console.error(err);
+    document.getElementById("errorMsg").innerText = "⚠️ Search error";
+  }
+};
+
+/*Weather of other place*/ 
+
+
+const loadCommonPlaces = async () => {
+  const cities = ["Delhi", "Mumbai", "Kolkata", "Chennai", "Bangalore"];
+
+  const table = document.getElementById("commonWeather");
+  table.innerHTML = "";
+
+  for (let city of cities) {
+    try {
+      // 📍 get coordinates
+      const geoRes = await fetch(
+        `https://geocoding-api.open-meteo.com/v1/search?name=${city}`,
+      );
+      const geoData = await geoRes.json();
+
+      if (!geoData.results) continue;
+
+      const { latitude, longitude, name } = geoData.results[0];
+
+      // 🌦️ weather
+      const res = await fetch(
+        `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current_weather=true`,
+      );
+      const data = await res.json();
+
+      // 🖥️ row create
+      const row = `
+        <tr>
+          <td>${name}</td>
+          <td>${data.current_weather.temperature}</td>
+          <td>${data.current_weather.windspeed}</td>
+        </tr>
+      `;
+
+      table.innerHTML += row;
+    } catch (err) {
+      console.error(err);
+    }
+  }
+};
+
+
+// 🚀 AUTO LOCATION (POPUP TRIGGER)
+window.addEventListener("load", () => {
+  setDynamicBackground();
+  loadCommonPlaces();
+
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(
+      async (pos) => {
+        const lat = pos.coords.latitude;
+        const lon = pos.coords.longitude;
+
+        // reverse geocoding
+        const geoRes = await fetch(
+          `https://geocoding-api.open-meteo.com/v1/reverse?latitude=${lat}&longitude=${lon}`,
+        );
+        const geoData = await geoRes.json();
+
+        const city = geoData.results[0].name;
+
+        getWeatherByCoords(lat, lon, city);
+      },
+      () => {
+        // ❌ user denied → fallback
+        getWeather("Noida");
+      },
+    );
+  } else {
+    getWeather("Noida");
+  }
+});
+
+// 🔍 Search
 document.getElementById("searchForm").addEventListener("submit", (e) => {
   e.preventDefault();
   const city = document.getElementById("city").value;
   getWeather(city);
 });
+
+// 📌 Navbar shrink
+window.addEventListener("scroll", () => {
+  const navbar = document.querySelector(".navbar");
+
+  if (window.scrollY > 50) {
+    navbar.classList.add("shrink");
+  } else {
+    navbar.classList.remove("shrink");
+  }
+});
+
+
+
+const createLightning = () => {
+  const container = document.querySelector(".lightning");
+  if (!container) return;
+
+  const flash = document.createElement("div");
+  flash.classList.add("flash");
+
+  container.appendChild(flash);
+
+  setTimeout(() => {
+    flash.remove();
+  }, 200);
+};
+
+
