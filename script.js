@@ -70,7 +70,7 @@ const getWeatherByCoords = async (lat, lon, cityName) => {
 
     // UI update
    document.getElementById("cityName").innerHTML =
-  `<i class="bi bi-geo-alt-fill"></i> ${city}`;
+     `<i class="bi bi-geo-alt-fill"></i> ${city}`;
     document.getElementById("temp").innerText =
       data.current_weather.temperature + " °C";
 
@@ -188,19 +188,39 @@ window.addEventListener("load", () => {
             const geoData = await geoRes.json();
 
             // ✅ SAFE CITY
-           let city = "📍 Your Location";
+            let city = "📍 Your Location";
 
-           if (geoData.results && geoData.results.length > 0) {
-             const place = geoData.results[0];
+            try {
+              const geoRes = await fetch(
+                `https://geocoding-api.open-meteo.com/v1/reverse?latitude=${lat}&longitude=${lon}`,
+              );
 
-             // 🔥 BEST LOGIC
-             city =
-               place.name ||
-               place.city ||
-               place.town ||
-               place.village ||
-               "📍 Your Location";
-           }
+              const geoData = await geoRes.json();
+
+              if (geoData.results && geoData.results.length > 0) {
+                city = geoData.results[0].name;
+              }
+            } catch (e) {
+              console.log("Reverse failed");
+            }
+            // 🧠 Backup using BigDataCloud (FREE + ACCURATE)
+            if (city === "📍 Your Location") {
+              try {
+                const res = await fetch(
+                  `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lon}&localityLanguage=en`,
+                );
+
+                const data = await res.json();
+
+                if (data.city) {
+                  city = data.city;
+                } else if (data.locality) {
+                  city = data.locality;
+                }
+              } catch (e) {
+                console.log("Backup failed");
+              }
+            }
 
             // ✅ SAVE
             localStorage.setItem("lastCity", city);
