@@ -27,7 +27,7 @@ html {
   background-position: center;
   background-repeat: no-repeat;
 
-  animation: bgMove 30s linear infinite;
+  animation: bgMove 90s linear infinite;
 }
 @keyframes bgMove {
   0% {
@@ -68,11 +68,11 @@ html {
 
 /* 🌅 Background images */
 .bg-morning {
-  background-image: url(morning_.png);
+  background-image: url(morning.png);
 }
 
 .bg-afternoon {
-  background-image: url(afternoon_img.png);
+  background-image: url(afternoon_.png);
 }
 
 .bg-evening {
