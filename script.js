@@ -53,13 +53,13 @@ const createLightning = () => {
   setTimeout(() => flash.remove(), 200);
 };
 
-// 🌍 WEATHER BY COORDS
+// 🌍 WEATHER BY COORDS (🔥 FIXED WITH MIN/MAX)
 const getWeatherByCoords = async (lat, lon, cityName) => {
   try {
     setDynamicBackground();
 
     const res = await fetch(
-      `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true&hourly=relativehumidity_2m`,
+      `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true&hourly=relativehumidity_2m&daily=temperature_2m_max,temperature_2m_min&timezone=auto`,
     );
 
     const data = await res.json();
@@ -76,15 +76,26 @@ const getWeatherByCoords = async (lat, lon, cityName) => {
         if (Math.random() < 0.4) createLightning();
       }, 3000);
     } else {
-      document.querySelector(".rain").innerHTML = "";
+      const rain = document.querySelector(".rain");
+      if (rain) rain.innerHTML = "";
     }
 
-    // ✅ UI update (FIXED)
+    // =============================
+    // 🌍 UI UPDATE
+    // =============================
+
     document.getElementById("cityName").innerHTML =
       `<i class="bi bi-geo-alt-fill"></i> ${cityName}`;
 
     document.getElementById("temp").innerText =
       data.current_weather.temperature + " °C";
+
+    // 🔥 MIN MAX FIX ADDED HERE
+    document.getElementById("min_temp").innerText =
+      data.daily?.temperature_2m_min?.[0] + " °C";
+
+    document.getElementById("max_temp").innerText =
+      data.daily?.temperature_2m_max?.[0] + " °C";
 
     document.getElementById("wind").innerText =
       data.current_weather.windspeed + " km/h";
@@ -124,7 +135,6 @@ const getWeather = async (city) => {
 
     const place = geoData.results[0];
 
-    // ✅ save last search
     localStorage.setItem("lastCity", place.name);
 
     getWeatherByCoords(place.latitude, place.longitude, place.name);
@@ -138,6 +148,9 @@ const getWeather = async (city) => {
 const loadCommonPlaces = async () => {
   const cities = ["Delhi", "Mumbai", "Kolkata", "Chennai", "Bangalore"];
   const table = document.getElementById("commonWeather");
+
+  if (!table) return;
+
   table.innerHTML = "";
 
   for (let city of cities) {
@@ -177,61 +190,37 @@ window.addEventListener("load", () => {
   const popup = document.getElementById("locationPopup");
   if (popup) popup.classList.add("show");
 
-  // ✅ Allow Location
   document.getElementById("allowLocation").onclick = async () => {
     if (popup) popup.classList.remove("show");
 
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        async (pos) => {
-          const lat = pos.coords.latitude;
-          const lon = pos.coords.longitude;
+    navigator.geolocation.getCurrentPosition(
+      async (pos) => {
+        const lat = pos.coords.latitude;
+        const lon = pos.coords.longitude;
 
-          let city = "📍 Your Location";
+        let city = "📍 Your Location";
 
-          // 🔥 Primary API
-          try {
-            const geoRes = await fetch(
-              `https://geocoding-api.open-meteo.com/v1/reverse?latitude=${lat}&longitude=${lon}`,
-            );
-            const geoData = await geoRes.json();
+        try {
+          const geoRes = await fetch(
+            `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lon}&localityLanguage=en`,
+          );
 
-            if (geoData.results && geoData.results.length > 0) {
-              city = geoData.results[0].name;
-            }
-          } catch {}
+          const data = await geoRes.json();
+          city = data.city || data.locality || city;
+        } catch {}
 
-          // 🔥 Backup API
-          if (city === "📍 Your Location") {
-            try {
-              const res = await fetch(
-                `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lon}&localityLanguage=en`,
-              );
-              const data = await res.json();
-
-              city = data.city || data.locality || city;
-            } catch {}
-          }
-
-          localStorage.setItem("lastCity", city);
-          getWeatherByCoords(lat, lon, city);
-        },
-        () => getWeather("Delhi"),
-      );
-    }
+        localStorage.setItem("lastCity", city);
+        getWeatherByCoords(lat, lon, city);
+      },
+      () => getWeather("Delhi"),
+    );
   };
 
-  // ❌ Deny
   document.getElementById("denyLocation").onclick = () => {
     if (popup) popup.classList.remove("show");
 
     const lastCity = localStorage.getItem("lastCity");
-
-    if (lastCity) {
-      getWeather(lastCity);
-    } else {
-      getWeather("Delhi");
-    }
+    getWeather(lastCity || "Delhi");
   };
 });
 
@@ -250,9 +239,21 @@ document.getElementById("searchForm").addEventListener("submit", (e) => {
 window.addEventListener("scroll", () => {
   const navbar = document.querySelector(".navbar");
 
+  if (!navbar) return;
+
   if (window.scrollY > 50) {
     navbar.classList.add("shrink");
   } else {
     navbar.classList.remove("shrink");
   }
 });
+
+// 🔽 sab code ke baad
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker
+      .register("service-worker.js")
+      .then(() => console.log("✅ Service Worker Registered"))
+      .catch((err) => console.log("❌ SW Error:", err));
+  });
+}
