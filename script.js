@@ -184,8 +184,18 @@ window.addEventListener("load", () => {
           );
           const geoData = await geoRes.json();
 
-          const city = geoData.results[0].name;
-          getWeatherByCoords(lat, lon, city);
+       let city = "Your Location";
+
+       if (geoData.results && geoData.results.length > 0) {
+         const place = geoData.results[0];
+
+         // ✅ try more specific fields
+         if (place.name.includes("Noida")) {
+           city = "Greater Noida";
+         } else {
+           city = place.name;
+         }
+       }
         },
         () => {
           getWeather("Delhi");
