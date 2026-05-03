@@ -257,3 +257,33 @@ if ("serviceWorker" in navigator) {
       .catch((err) => console.log("❌ SW Error:", err));
   });
 }
+
+/**======================related to App=============== */
+
+const clouds = document.querySelector(".clouds");
+
+// reset
+if (clouds) clouds.style.display = "none";
+
+if (hour >= 5 && hour < 11) {
+  bg.classList.add("bg-morning");
+
+  // 🌤️ morning → clouds ON
+  if (clouds) clouds.style.display = "block";
+} else if (hour >= 11 && hour < 16) {
+  bg.classList.add("bg-afternoon");
+
+  // ☀️ afternoon → clouds OFF
+} else if (hour >= 16 && hour < 19) {
+  bg.classList.add("bg-evening");
+
+  // 🌇 evening → light clouds (optional)
+  if (clouds) {
+    clouds.style.display = "block";
+    clouds.style.opacity = "0.2";
+  }
+} else {
+  bg.classList.add("bg-night");
+
+  // 🌙 night → clouds OFF
+}
