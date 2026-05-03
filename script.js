@@ -40,6 +40,19 @@ const createRain = (count = 100) => {
   }
 };
 
+// ⚡ Lightning
+const createLightning = () => {
+  const container = document.querySelector(".lightning");
+  if (!container) return;
+
+  const flash = document.createElement("div");
+  flash.classList.add("flash");
+
+  container.appendChild(flash);
+
+  setTimeout(() => flash.remove(), 200);
+};
+
 // 🌍 WEATHER BY COORDS
 const getWeatherByCoords = async (lat, lon, cityName) => {
   try {
@@ -53,24 +66,23 @@ const getWeatherByCoords = async (lat, lon, cityName) => {
 
     const weatherCode = data.current_weather.weathercode;
 
-    // 🌧️ Accurate rain codes
+    // 🌧️ Rain codes
     const rainCodes = [51, 53, 55, 61, 63, 65, 80, 81, 82];
 
     if (rainCodes.includes(weatherCode)) {
       createRain(120);
 
       setInterval(() => {
-        if (Math.random() < 0.4) {
-          createLightning();
-        }
+        if (Math.random() < 0.4) createLightning();
       }, 3000);
     } else {
       document.querySelector(".rain").innerHTML = "";
     }
 
-    // UI update
-   document.getElementById("cityName").innerHTML =
-     `<i class="bi bi-geo-alt-fill"></i> ${city}`;
+    // ✅ UI update (FIXED)
+    document.getElementById("cityName").innerHTML =
+      `<i class="bi bi-geo-alt-fill"></i> ${cityName}`;
+
     document.getElementById("temp").innerText =
       data.current_weather.temperature + " °C";
 
@@ -111,6 +123,10 @@ const getWeather = async (city) => {
     }
 
     const place = geoData.results[0];
+
+    // ✅ save last search
+    localStorage.setItem("lastCity", place.name);
+
     getWeatherByCoords(place.latitude, place.longitude, place.name);
   } catch (err) {
     console.error(err);
@@ -118,18 +134,14 @@ const getWeather = async (city) => {
   }
 };
 
-/*Weather of other place*/ 
-
-
+// 🌍 COMMON CITIES
 const loadCommonPlaces = async () => {
   const cities = ["Delhi", "Mumbai", "Kolkata", "Chennai", "Bangalore"];
-
   const table = document.getElementById("commonWeather");
   table.innerHTML = "";
 
   for (let city of cities) {
     try {
-      // 📍 get coordinates
       const geoRes = await fetch(
         `https://geocoding-api.open-meteo.com/v1/search?name=${city}`,
       );
@@ -139,39 +151,34 @@ const loadCommonPlaces = async () => {
 
       const { latitude, longitude, name } = geoData.results[0];
 
-      // 🌦️ weather
       const res = await fetch(
         `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current_weather=true`,
       );
       const data = await res.json();
 
-      // 🖥️ row create
-      const row = `
+      table.innerHTML += `
         <tr>
           <td>${name}</td>
           <td>${data.current_weather.temperature}</td>
           <td>${data.current_weather.windspeed}</td>
         </tr>
       `;
-
-      table.innerHTML += row;
     } catch (err) {
       console.error(err);
     }
   }
 };
 
-
-// 🚀 AUTO LOCATION (POPUP TRIGGER)
+// 🚀 ON LOAD
 window.addEventListener("load", () => {
   setDynamicBackground();
   loadCommonPlaces();
 
   const popup = document.getElementById("locationPopup");
-  popup.classList.add("show");
+  if (popup) popup.classList.add("show");
 
-  // ✅ Allow
-  document.getElementById("allowLocation").onclick = () => {
+  // ✅ Allow Location
+  document.getElementById("allowLocation").onclick = async () => {
     if (popup) popup.classList.remove("show");
 
     if (navigator.geolocation) {
@@ -180,80 +187,62 @@ window.addEventListener("load", () => {
           const lat = pos.coords.latitude;
           const lon = pos.coords.longitude;
 
+          let city = "📍 Your Location";
+
+          // 🔥 Primary API
           try {
             const geoRes = await fetch(
               `https://geocoding-api.open-meteo.com/v1/reverse?latitude=${lat}&longitude=${lon}`,
             );
-
             const geoData = await geoRes.json();
 
-            // ✅ SAFE CITY
-            let city = "📍 Your Location";
+            if (geoData.results && geoData.results.length > 0) {
+              city = geoData.results[0].name;
+            }
+          } catch {}
 
+          // 🔥 Backup API
+          if (city === "📍 Your Location") {
             try {
-              const geoRes = await fetch(
-                `https://geocoding-api.open-meteo.com/v1/reverse?latitude=${lat}&longitude=${lon}`,
+              const res = await fetch(
+                `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lon}&localityLanguage=en`,
               );
+              const data = await res.json();
 
-              const geoData = await geoRes.json();
-
-              if (geoData.results && geoData.results.length > 0) {
-                city = geoData.results[0].name;
-              }
-            } catch (e) {
-              console.log("Reverse failed");
-            }
-            // 🧠 Backup using BigDataCloud (FREE + ACCURATE)
-            if (city === "📍 Your Location") {
-              try {
-                const res = await fetch(
-                  `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lon}&localityLanguage=en`,
-                );
-
-                const data = await res.json();
-
-                if (data.city) {
-                  city = data.city;
-                } else if (data.locality) {
-                  city = data.locality;
-                }
-              } catch (e) {
-                console.log("Backup failed");
-              }
-            }
-
-            // ✅ SAVE
-            localStorage.setItem("lastCity", city);
-
-            // 🔥 MOST IMPORTANT (ALWAYS CALL)
-            getWeatherByCoords(lat, lon, city);
-          } catch (err) {
-            console.error("Geo error:", err);
-
-            // 🔥 EVEN IF FAIL → STILL SHOW WEATHER
-            getWeatherByCoords(lat, lon, "📍 Your Location");
+              city = data.city || data.locality || city;
+            } catch {}
           }
-        },
 
-        // ❌ user denied or error
-        () => {
-          getWeather("Delhi");
+          localStorage.setItem("lastCity", city);
+          getWeatherByCoords(lat, lon, city);
         },
+        () => getWeather("Delhi"),
       );
     }
   };
 
   // ❌ Deny
   document.getElementById("denyLocation").onclick = () => {
-    popup.classList.remove("show");
-    getWeather("Delhi"); // default city
+    if (popup) popup.classList.remove("show");
+
+    const lastCity = localStorage.getItem("lastCity");
+
+    if (lastCity) {
+      getWeather(lastCity);
+    } else {
+      getWeather("Delhi");
+    }
   };
 });
 
-// 🔍 Search
+// 🔍 SEARCH
 document.getElementById("searchForm").addEventListener("submit", (e) => {
   e.preventDefault();
-  const city = document.getElementById("city").value;
+
+  const city = document.getElementById("city").value.trim();
+
+  if (!city) return;
+
   getWeather(city);
 });
 
@@ -267,23 +256,3 @@ window.addEventListener("scroll", () => {
     navbar.classList.remove("shrink");
   }
 });
-
-
-
-const createLightning = () => {
-  const container = document.querySelector(".lightning");
-  if (!container) return;
-
-  const flash = document.createElement("div");
-  flash.classList.add("flash");
-
-  container.appendChild(flash);
-
-  setTimeout(() => {
-    flash.remove();
-  }, 200);
-};
-
-
-
-/*==============================for location */
