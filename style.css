@@ -68,7 +68,7 @@ html {
 
 /* 🌅 Background images */
 .bg-morning {
-  background-image: url(morning.png);
+  background-image: url(morning_.png);
 }
 
 .bg-afternoon {
@@ -251,4 +251,148 @@ body.night-mode #usage p {
   background-color: transparent;
 }
 
+/*============================location=================================*/
+/* Location Button */
+/*  BACKDROP */
+.location-popup {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
 
+  background: radial-gradient(circle at center, rgba(0,0,0,0.4), rgba(0,0,0,0.8));
+  backdrop-filter: blur(10px);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  z-index: 9999;
+
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.4s ease;
+}
+
+.location-popup.show {
+  opacity: 1;
+  pointer-events: all;
+}
+
+/* 💎 GLASS POPUP */
+.popup-box {
+  position: relative;
+
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(25px);
+  -webkit-backdrop-filter: blur(25px);
+
+  border-radius: 20px;
+  padding: 30px;
+  width: 340px;
+
+  text-align: center;
+  color: #fff;
+
+  border: 1px solid rgba(255,255,255,0.2);
+
+  /* Glow */
+  box-shadow:
+    0 0 25px rgba(0, 150, 255, 0.3),
+    0 0 60px rgba(0, 150, 255, 0.15);
+
+  animation: popupEnter 0.5s ease, float 3s ease-in-out infinite;
+}
+
+/* ✨ Glow border effect */
+.popup-box::before {
+  content: "";
+  position: absolute;
+  inset: -2px;
+
+  border-radius: 22px;
+  background: linear-gradient(135deg, #00c6ff, #0072ff, #00c6ff);
+
+  z-index: -1;
+  filter: blur(10px);
+  opacity: 0.6;
+}
+
+/* 🎬 ENTRY ANIMATION */
+@keyframes popupEnter {
+  from {
+    transform: scale(0.7) translateY(40px);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1) translateY(0);
+    opacity: 1;
+  }
+}
+
+/* 🌊 FLOATING EFFECT */
+@keyframes float {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-8px); }
+  100% { transform: translateY(0px); }
+}
+
+/* 🎯 TEXT */
+.popup-box h4 {
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+.popup-box p {
+  font-size: 14px;
+  opacity: 0.85;
+}
+
+/* 🔘 BUTTONS */
+.popup-actions {
+  margin-top: 20px;
+  display: flex;
+  justify-content: space-between;
+}
+
+/* ✅ Allow Button (Glow) */
+.btn-allow {
+  flex: 1;
+  margin-right: 8px;
+
+  background: linear-gradient(135deg, #00c6ff, #0072ff);
+  border: none;
+  padding: 10px;
+  border-radius: 12px;
+
+  color: #fff;
+  font-weight: 500;
+  cursor: pointer;
+
+  box-shadow: 0 0 15px rgba(0, 150, 255, 0.5);
+  transition: 0.3s;
+}
+
+.btn-allow:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 25px rgba(0, 150, 255, 0.8);
+}
+
+/* ❌ Deny Button */
+.btn-deny {
+  flex: 1;
+
+  background: rgba(255,255,255,0.1);
+  border: none;
+  padding: 10px;
+  border-radius: 12px;
+
+  color: #fff;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.btn-deny:hover {
+  background: rgba(255,255,255,0.2);
+}
