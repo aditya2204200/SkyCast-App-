@@ -166,30 +166,39 @@ window.addEventListener("load", () => {
   setDynamicBackground();
   loadCommonPlaces();
 
-  if (navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition(
-      async (pos) => {
-        const lat = pos.coords.latitude;
-        const lon = pos.coords.longitude;
+  const popup = document.getElementById("locationPopup");
+  popup.classList.add("show");
 
-        // reverse geocoding
-        const geoRes = await fetch(
-          `https://geocoding-api.open-meteo.com/v1/reverse?latitude=${lat}&longitude=${lon}`,
-        );
-        const geoData = await geoRes.json();
+  // ✅ Allow
+  document.getElementById("allowLocation").onclick = () => {
+    popup.classList.remove("show");
 
-        const city = geoData.results[0].name;
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        async (pos) => {
+          const lat = pos.coords.latitude;
+          const lon = pos.coords.longitude;
 
-        getWeatherByCoords(lat, lon, city);
-      },
-      () => {
-        // ❌ user denied → fallback
-        getWeather("Noida");
-      },
-    );
-  } else {
-    getWeather("Noida");
-  }
+          const geoRes = await fetch(
+            `https://geocoding-api.open-meteo.com/v1/reverse?latitude=${lat}&longitude=${lon}`,
+          );
+          const geoData = await geoRes.json();
+
+          const city = geoData.results[0].name;
+          getWeatherByCoords(lat, lon, city);
+        },
+        () => {
+          getWeather("Delhi");
+        },
+      );
+    }
+  };
+
+  // ❌ Deny
+  document.getElementById("denyLocation").onclick = () => {
+    popup.classList.remove("show");
+    getWeather("Delhi"); // default city
+  };
 });
 
 // 🔍 Search
@@ -227,3 +236,5 @@ const createLightning = () => {
 };
 
 
+
+/*==============================for location */
