@@ -69,7 +69,8 @@ const getWeatherByCoords = async (lat, lon, cityName) => {
     }
 
     // UI update
-    document.getElementById("cityName").innerText = cityName;
+   document.getElementById("cityName").innerHTML =
+  `<i class="bi bi-geo-alt-fill"></i> ${city}`;
     document.getElementById("temp").innerText =
       data.current_weather.temperature + " °C";
 
