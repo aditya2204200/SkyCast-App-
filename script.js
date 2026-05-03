@@ -192,8 +192,13 @@ window.addEventListener("load", () => {
            if (geoData.results && geoData.results.length > 0) {
              const place = geoData.results[0];
 
-             // 🔥 smarter selection
-             city = place.city || place.town || place.village || place.name;
+             // 🔥 BEST LOGIC
+             city =
+               place.name ||
+               place.city ||
+               place.town ||
+               place.village ||
+               "📍 Your Location";
            }
 
             // ✅ SAVE
