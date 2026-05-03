@@ -68,19 +68,19 @@ html {
 
 /* 🌅 Background images */
 .bg-morning {
-  background-image: url(morning.png);
+  background-image: url("images/morning.png");
 }
 
 .bg-afternoon {
-  background-image: url(afternoon_.png);
+  background-image: url("images/afternoon_.png");
 }
 
 .bg-evening {
-  background-image: url(evening.png);
+  background-image: url("images/evening.png");
 }
 
 .bg-night {
-  background-image: url(night.png);
+  background-image: url("images/night.png");
 }
 
 /* ========================= */
