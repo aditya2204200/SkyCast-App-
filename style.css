@@ -396,3 +396,56 @@ body.night-mode #usage p {
 .btn-deny:hover {
   background: rgba(255,255,255,0.2);
 }
+
+
+
+/* ===== MOBILE BACKGROUND FIX ===== */
+@media (max-width: 768px) {
+  .bg-morning {
+    background-image: url("images/morning-mobile.png");
+  }
+
+  .bg-afternoon {
+    background-image: url("images/afternoon-mobile.png");
+  }
+
+  .bg-evening {
+    background-image: url("images/evening-mobile.png");
+  }
+
+  .bg-night {
+    background-image: url("images/night-mobile.png");
+  }
+}
+
+
+@media (max-width: 768px) {
+  .bg-fixed {
+    animation: bgMove 120s linear infinite; /* slow movement */
+    background-size: cover;
+    background-position: center;
+  }
+}
+.clouds {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .clouds {
+    display: block;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 200%;
+    height: 100%;
+    z-index: -1;
+
+    background: url("images/clouds.png") repeat-x;
+    background-size: contain;
+
+    opacity: 0.3;
+    pointer-events: none;
+
+    animation: cloudMove 120s linear infinite;
+  }
+}
