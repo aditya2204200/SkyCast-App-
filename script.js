@@ -170,51 +170,52 @@ window.addEventListener("load", () => {
   popup.classList.add("show");
 
   // ✅ Allow
-document.getElementById("allowLocation").onclick = () => {
-  if (popup) popup.classList.remove("show");
+  document.getElementById("allowLocation").onclick = () => {
+    if (popup) popup.classList.remove("show");
 
-  if (navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition(
-      async (pos) => {
-        const lat = pos.coords.latitude;
-        const lon = pos.coords.longitude;
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        async (pos) => {
+          const lat = pos.coords.latitude;
+          const lon = pos.coords.longitude;
 
-        try {
-          const geoRes = await fetch(
-            `https://geocoding-api.open-meteo.com/v1/reverse?latitude=${lat}&longitude=${lon}`
-          );
+          try {
+            const geoRes = await fetch(
+              `https://geocoding-api.open-meteo.com/v1/reverse?latitude=${lat}&longitude=${lon}`,
+            );
 
-          const geoData = await geoRes.json();
+            const geoData = await geoRes.json();
 
-          // ✅ SAFE CITY
-          let city = "📍 Your Location";
+            // ✅ SAFE CITY
+           let city = "📍 Your Location";
 
-          if (geoData.results && geoData.results.length > 0) {
-            city = geoData.results[0].name;
+           if (geoData.results && geoData.results.length > 0) {
+             const place = geoData.results[0];
+
+             // 🔥 smarter selection
+             city = place.city || place.town || place.village || place.name;
+           }
+
+            // ✅ SAVE
+            localStorage.setItem("lastCity", city);
+
+            // 🔥 MOST IMPORTANT (ALWAYS CALL)
+            getWeatherByCoords(lat, lon, city);
+          } catch (err) {
+            console.error("Geo error:", err);
+
+            // 🔥 EVEN IF FAIL → STILL SHOW WEATHER
+            getWeatherByCoords(lat, lon, "📍 Your Location");
           }
+        },
 
-          // ✅ SAVE
-          localStorage.setItem("lastCity", city);
-
-          // 🔥 MOST IMPORTANT (ALWAYS CALL)
-          getWeatherByCoords(lat, lon, city);
-
-        } catch (err) {
-          console.error("Geo error:", err);
-
-          // 🔥 EVEN IF FAIL → STILL SHOW WEATHER
-          getWeatherByCoords(lat, lon, "📍 Your Location");
-        }
-      },
-
-      // ❌ user denied or error
-      () => {
-        getWeather("Delhi");
-      }
-    );
-  }
-};
-      
+        // ❌ user denied or error
+        () => {
+          getWeather("Delhi");
+        },
+      );
+    }
+  };
 
   // ❌ Deny
   document.getElementById("denyLocation").onclick = () => {
