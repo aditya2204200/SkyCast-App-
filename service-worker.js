@@ -1,13 +1,9 @@
-self.addEventListener("install", (e) => {
-  e.waitUntil(
-    caches.open("skycast-cache").then((cache) => {
-      return cache.addAll([
-        "/",
-        "/index.html",
-        "/style.css",
-        "/script.js",
-        "/logo.png",
-      ]);
-    }),
-  );
-});
+const CACHE_NAME = "skycast-v1";
+
+const urlsToCache = [
+  "/SkyCast-App-/",
+  "/SkyCast-App-/index.html",
+  "/SkyCast-App-/style.css",
+  "/SkyCast-App-/script.js",
+  "/SkyCast-App-/logo.png",
+];
