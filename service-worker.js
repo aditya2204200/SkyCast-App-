@@ -1,17 +1,16 @@
-
-
-const CACHE_NAME = "skycast-v10";
+const CACHE_NAME = "skycast-v3";
 
 self.addEventListener("install", (event) => {
-  // ❌ यहाँ skipWaiting नहीं
+  console.log("SW Installed");
 });
 
 self.addEventListener("activate", (event) => {
   event.waitUntil(self.clients.claim());
 });
 
+// 🔥 Only update when user clicks button
 self.addEventListener("message", (event) => {
   if (event.data.action === "skipWaiting") {
-    self.skipWaiting(); // ✅ only manual update
+    self.skipWaiting();
   }
 });
