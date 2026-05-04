@@ -1,6 +1,6 @@
 
 
-const CACHE_NAME = "skycast-v8";
+const CACHE_NAME = "skycast-v9";
 
 self.addEventListener("install", (event) => {
   // ❌ यहाँ skipWaiting नहीं
