@@ -1,16 +1,9 @@
-const CACHE_NAME = "skycast-v11";
+const CACHE_NAME = "skycast-v12"; // हर update पर change करना
 
 self.addEventListener("install", (event) => {
-  console.log("SW Installed");
+  self.skipWaiting(); // 🔥 auto activate new version
 });
 
 self.addEventListener("activate", (event) => {
-  event.waitUntil(self.clients.claim());
-});
-
-// 🔥 Only update when user clicks button
-self.addEventListener("message", (event) => {
-  if (event.data.action === "skipWaiting") {
-    self.skipWaiting();
-  }
+  event.waitUntil(self.clients.claim()); // 🔥 old clients ko control le lo
 });
