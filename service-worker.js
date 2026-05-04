@@ -1,4 +1,4 @@
-const CACHE_NAME = "skycast-v3";
+const CACHE_NAME = "skycast-v11";
 
 self.addEventListener("install", (event) => {
   console.log("SW Installed");
