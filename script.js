@@ -241,6 +241,13 @@ let newWorker;
 
 if ("serviceWorker" in navigator) {
   navigator.serviceWorker.register("service-worker.js").then((reg) => {
+
+    // 🔥 अगर already waiting SW है
+    if (reg.waiting) {
+      newWorker = reg.waiting;
+      showUpdateUI();
+    }
+
     reg.addEventListener("updatefound", () => {
       newWorker = reg.installing;
 
@@ -265,6 +272,13 @@ function showUpdateUI() {
 }
 
 function updateApp() {
-  newWorker?.postMessage({ action: "skipWaiting" });
+  if (!newWorker) return;
+
+  newWorker.postMessage({ action: "skipWaiting" });
+
+  // 🔥 force reload after update
+  setTimeout(() => {
+    window.location.reload();
+  }, 1000);
 }
 
