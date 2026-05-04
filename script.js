@@ -237,48 +237,55 @@ window.addEventListener("scroll", () => {
 
 
 // ================== SERVICE WORKER + UPDATE ==================
-let newWorker;
+// let newWorker;
 
+// if ("serviceWorker" in navigator) {
+//   navigator.serviceWorker.register("service-worker.js").then((reg) => {
+
+//     // 🔥 अगर already waiting SW है
+//     if (reg.waiting) {
+//       newWorker = reg.waiting;
+//       showUpdateUI();
+//     }
+
+//     reg.addEventListener("updatefound", () => {
+//       newWorker = reg.installing;
+
+//       newWorker.addEventListener("statechange", () => {
+//         if (
+//           newWorker.state === "installed" &&
+//           navigator.serviceWorker.controller
+//         ) {
+//           showUpdateUI();
+//         }
+//       });
+//     });
+//   });
+
+//   navigator.serviceWorker.addEventListener("controllerchange", () => {
+//     window.location.reload();
+//   });
+// }
+
+// function showUpdateUI() {
+//   document.getElementById("updateBox").style.display = "block";
+// }
+
+// function updateApp() {
+//   if (!newWorker) return;
+
+//   newWorker.postMessage({ action: "skipWaiting" });
+
+//   // 🔥 force reload after update
+//   setTimeout(() => {
+//     window.location.reload();
+//   }, 1000);
+// }
 if ("serviceWorker" in navigator) {
-  navigator.serviceWorker.register("service-worker.js").then((reg) => {
-
-    // 🔥 अगर already waiting SW है
-    if (reg.waiting) {
-      newWorker = reg.waiting;
-      showUpdateUI();
-    }
-
-    reg.addEventListener("updatefound", () => {
-      newWorker = reg.installing;
-
-      newWorker.addEventListener("statechange", () => {
-        if (
-          newWorker.state === "installed" &&
-          navigator.serviceWorker.controller
-        ) {
-          showUpdateUI();
-        }
-      });
-    });
-  });
+  navigator.serviceWorker.register("service-worker.js");
 
   navigator.serviceWorker.addEventListener("controllerchange", () => {
-    window.location.reload();
+    window.location.reload(); // 🔥 auto reload on update
   });
-}
-
-function showUpdateUI() {
-  document.getElementById("updateBox").style.display = "block";
-}
-
-function updateApp() {
-  if (!newWorker) return;
-
-  newWorker.postMessage({ action: "skipWaiting" });
-
-  // 🔥 force reload after update
-  setTimeout(() => {
-    window.location.reload();
-  }, 1000);
 }
 
