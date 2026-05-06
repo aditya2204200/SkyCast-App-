@@ -554,3 +554,9 @@ body.night-mode #usage p {
   max-width: 90%;
 }
 
+.card {
+  height: 260px;
+}
+.wind-compass {
+  transform: scale(0.85);
+}
