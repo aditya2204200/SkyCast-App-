@@ -560,3 +560,7 @@ body.night-mode #usage p {
 .wind-compass {
   transform: scale(0.85);
 }
+.wind-compass {
+  position: relative;
+  top: -10px;
+}
