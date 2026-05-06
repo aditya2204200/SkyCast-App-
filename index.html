@@ -100,21 +100,26 @@
           </div>
 
           <!-- Wind -->
-          <div class="col">
-  <div class="card mb-4 rounded-3 shadow-sm border-primary">
-    <div class="card-header py-3">
-      <h4>Wind</h4>
-    </div>
-    <div class="card-body">
-      <h1 id="wind">-- km/h</h1>
-      <p>Direction: <span id="wind_dir"></span></p>
+        <div class="card-body">
+  <h1 id="wind">-- km/h</h1>
 
-      <!--  WEATHER CONDITION (UPDATED) -->
-      <h4 id="conditions" style="margin-top:10px;">--</h4>
+  <!-- Compass UI -->
+  <div class="wind-compass mt-3">
+    <div class="compass-circle">
+      <div class="arrow" id="windArrow"></div>
+
+      <div class="direction north">N</div>
+      <div class="direction east">E</div>
+      <div class="direction south">S</div>
+      <div class="direction west">W</div>
     </div>
+
+    <p id="windText">Direction: --</p>
   </div>
+
+  <!-- Weather Condition -->
+  <h4 id="conditions" style="margin-top:10px;">--</h4>
 </div>
-        </div>
         <h2 class="display-6 text-center mb-4">
           Weather of Other Common Places
         </h2>
