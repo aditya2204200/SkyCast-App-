@@ -457,8 +457,13 @@ body.night-mode #usage p {
 }
 
 .compass-circle {
-  width: 140px;
-  height: 140px;
+  width: 180px;
+  height: 180px;
+  border-radius: 50%;
+  border: 4px solid rgba(255,255,255,0.3);
+  position: relative;
+  margin: auto;
+  backdrop-filter: blur(10px);
 }
 
 .arrow {
