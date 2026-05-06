@@ -449,3 +449,55 @@ body.night-mode #usage p {
     animation: cloudMove 120s linear infinite;
   }
 }
+
+
+.wind-compass {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.compass-circle {
+  width: 180px;
+  height: 180px;
+  border-radius: 50%;
+  border: 4px solid rgba(255,255,255,0.3);
+  position: relative;
+  margin: auto;
+  backdrop-filter: blur(10px);
+}
+
+.arrow {
+  width: 4px;
+  height: 70px;
+  background: red;
+  position: absolute;
+  top: 20px;
+  left: 50%;
+  transform-origin: bottom center;
+  transform: translateX(-50%) rotate(0deg);
+  border-radius: 2px;
+  transition: transform 0.8s ease-in-out;
+}
+
+/* Arrow tip */
+.arrow::after {
+  content: "";
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 8px solid transparent;
+  border-bottom: 12px solid red;
+}
+
+/* Directions */
+.direction {
+  position: absolute;
+  font-weight: bold;
+  color: white;
+}
+
+.north { top: 5px; left: 50%; transform: translateX(-50%); }
+.south { bottom: 5px; left: 50%; transform: translateX(-50%); }
+.east  { right: 5px; top: 50%; transform: translateY(-50%); }
+.west  { left: 5px; top: 50%; transform: translateY(-50%); }
