@@ -489,13 +489,14 @@ body.night-mode #usage p {
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-top: 10px;
+  margin-top: -10px;
+  transform: scale(0.8);
 }
 
 /* Circle size FIX (pehle bada tha) */
 .compass-circle {
-  width: 130px;
-  height: 130px;
+  width: 100px;
+  height: 100px;
   border-radius: 50%;
   border: 3px solid rgba(255,255,255,0.4);
   position: relative;
@@ -505,7 +506,7 @@ body.night-mode #usage p {
 /* Arrow FIX */
 .arrow {
   width: 3px;
-  height: 55px;
+  height: 40px;
   background: red;
   position: absolute;
   top: 25px;
@@ -557,8 +558,5 @@ body.night-mode #usage p {
 .card {
   height: 260px;
 }
-.wind-compass {
-  transform: scale(0.85);
-  margin-top: -15px;
-}
+
 
