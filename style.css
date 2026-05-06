@@ -545,13 +545,51 @@ body.night-mode #usage p {
 /* ===== Heading Center Fix ===== */
 
 
-#about, #usage {
-  margin: 80px 0;
+/* 🌟 SECTION GLASS PANEL */
+#usage, #about {
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+
+  border-radius: 20px;
+  padding: 30px;
+
+  margin: 80px auto;
+  max-width: 1100px;
+
+  border: 1px solid rgba(255,255,255,0.2);
+}
+#usage .row > div {
+  margin-bottom: 20px;
 }
 
-.container.my-5 .card {
-  max-width: 500px;
-  margin: auto;
+#about ul {
+  padding-left: 20px;
+}
+#usage h2,
+#about h2 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+#usage p.text-center,
+#about p {
+  text-align: center;
+  opacity: 0.9;
+}
+body.night-mode #usage,
+body.night-mode #about {
+  background: rgba(0, 0, 0, 0.6);
+}
+
+body.night-mode #usage .card,
+body.night-mode #about .card {
+  background: rgba(0, 0, 0, 0.7);
+}
+
+#usage .card,
+#about .card {
+  width: 100%;
 }
 
 /*  ONLY weather cards */
