@@ -29,7 +29,7 @@ const setDynamicBackground = () => {
   }
 };
 
-// 🌧️ Rain
+//  Rain
 let lightningInterval;
 
 const createRain = (count = 100) => {
@@ -54,7 +54,7 @@ const stopRain = () => {
   clearInterval(lightningInterval);
 };
 
-// ⚡ Lightning
+//  Lightning
 const createLightning = () => {
   const container = document.querySelector(".lightning");
   if (!container) return;
@@ -66,7 +66,7 @@ const createLightning = () => {
   setTimeout(() => flash.remove(), 200);
 };
 
-// 🌍 Weather API
+//  Weather API
 const getWeatherByCoords = async (lat, lon, cityName) => {
   try {
     setDynamicBackground();
@@ -109,9 +109,22 @@ const getWeatherByCoords = async (lat, lon, cityName) => {
     document.getElementById("wind_dir").innerText =
       data.current_weather.winddirection + "°";
 
-    const i = data.hourly.time.indexOf(data.current_weather.time);
-    document.getElementById("humidity").innerText =
-      (i !== -1 ? data.hourly.relativehumidity_2m[i] : "--") + " %";
+const currentTime = new Date(data.current_weather.time);
+
+// find closest time index
+let closestIndex = 0;
+let minDiff = Infinity;
+
+data.hourly.time.forEach((t, index) => {
+  const diff = Math.abs(new Date(t) - currentTime);
+  if (diff < minDiff) {
+    minDiff = diff;
+    closestIndex = index;
+  }
+});
+
+document.getElementById("humidity").innerText =
+  data.hourly.relativehumidity_2m[closestIndex] + " %";
 
     document.getElementById("errorMsg").innerText = "";
   } catch {
@@ -119,7 +132,7 @@ const getWeatherByCoords = async (lat, lon, cityName) => {
   }
 };
 
-// 🌍 City search
+//  City search
 const getWeather = async (city) => {
   try {
     const geo = await fetch(
@@ -138,7 +151,7 @@ const getWeather = async (city) => {
   }
 };
 
-// 🌍 Common cities
+//  Common cities
 const loadCommonPlaces = async () => {
   const cities = ["Delhi", "Mumbai", "Kolkata", "Chennai", "Bangalore"];
   const table = document.getElementById("commonWeather");
@@ -171,7 +184,7 @@ const loadCommonPlaces = async () => {
   }
 };
 
-// 🚀 LOAD
+//  LOAD
 window.addEventListener("load", () => {
   setDynamicBackground();
   loadCommonPlaces();
@@ -187,7 +200,7 @@ window.addEventListener("load", () => {
        const lat = pos.coords.latitude;
        const lon = pos.coords.longitude;
 
-       let cityName = "📍 Your Location";
+       let cityName = " Your Location";
 
        try {
          const res = await fetch(
@@ -201,7 +214,7 @@ window.addEventListener("load", () => {
            data.locality ||
            data.principalSubdivision ||
            data.localityInfo?.administrative?.[2]?.name ||
-           "📍 Your Location";
+           " Your Location";
        } catch (err) {
          console.log("City fetch error");
        }
@@ -218,14 +231,14 @@ window.addEventListener("load", () => {
   };
 });
 
-// 🔍 Search
+//  Search
 document.getElementById("searchForm").addEventListener("submit", (e) => {
   e.preventDefault();
   const city = document.getElementById("city").value.trim();
   if (city) getWeather(city);
 });
 
-// 📌 Navbar shrink
+//  Navbar shrink
 window.addEventListener("scroll", () => {
   document
     .querySelector(".navbar")
@@ -236,51 +249,7 @@ window.addEventListener("scroll", () => {
 
 
 
-// ================== SERVICE WORKER + UPDATE ==================
-// let newWorker;
 
-// if ("serviceWorker" in navigator) {
-//   navigator.serviceWorker.register("service-worker.js").then((reg) => {
-
-//     // 🔥 अगर already waiting SW है
-//     if (reg.waiting) {
-//       newWorker = reg.waiting;
-//       showUpdateUI();
-//     }
-
-//     reg.addEventListener("updatefound", () => {
-//       newWorker = reg.installing;
-
-//       newWorker.addEventListener("statechange", () => {
-//         if (
-//           newWorker.state === "installed" &&
-//           navigator.serviceWorker.controller
-//         ) {
-//           showUpdateUI();
-//         }
-//       });
-//     });
-//   });
-
-//   navigator.serviceWorker.addEventListener("controllerchange", () => {
-//     window.location.reload();
-//   });
-// }
-
-// function showUpdateUI() {
-//   document.getElementById("updateBox").style.display = "block";
-// }
-
-// function updateApp() {
-//   if (!newWorker) return;
-
-//   newWorker.postMessage({ action: "skipWaiting" });
-
-//   // 🔥 force reload after update
-//   setTimeout(() => {
-//     window.location.reload();
-//   }, 1000);
-// }
 if ("serviceWorker" in navigator) {
   navigator.serviceWorker.register("service-worker.js");
 
