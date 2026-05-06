@@ -545,12 +545,8 @@ body.night-mode #usage p {
 /* ===== Heading Center Fix ===== */
 
 
-#about {
-  margin-bottom: 80px;
-}
-
-#usage {
-  margin-top: 40px;
+#about, #usage {
+  margin: 80px 0;
 }
 
 .container.my-5 .card {
@@ -558,8 +554,10 @@ body.night-mode #usage p {
   margin: auto;
 }
 
-.card {
-  height: 260px;
+/*  ONLY weather cards */
+main .card {
+  min-height: 260px;
+  height: auto;
 }
 
 
