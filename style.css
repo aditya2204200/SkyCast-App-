@@ -240,7 +240,11 @@ body.night-mode #usage p {
 /*======================Some other place*===========================*/
 .dynamic-table {
   background-color: rgba(0, 123, 255, 0.5);
-  padding: 10px;
+
+  max-width: 900px;   
+  margin: 40px auto; 
+  padding: 15px;
+
   border-radius: 10px;
 }
 
@@ -517,3 +521,24 @@ body.night-mode #usage p {
 .south { bottom: 5px; left: 50%; transform: translateX(-50%); }
 .east  { right: 5px; top: 50%; transform: translateY(-50%); }
 .west  { left: 5px; top: 50%; transform: translateY(-50%); }
+
+
+/* ===== Heading Center Fix ===== */
+.display-6 {
+  text-align: center;
+  margin-top: 60px;
+  margin-bottom: 20px;
+}
+
+.container.my-5 {
+  display: flex;
+  justify-content: center;
+}
+
+.container.my-5 .card {
+  width: 400px;   /* 🔥 fixed size */
+  max-width: 90%;
+}
+#calendar {
+  text-align: center;
+}
