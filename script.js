@@ -105,9 +105,8 @@ const getWeatherByCoords = async (lat, lon, cityName) => {
 
     document.getElementById("wind").innerText =
       data.current_weather.windspeed + " km/h";
-
-    document.getElementById("wind_dir").innerText =
-      data.current_weather.winddirection + "°";
+  // compass update
+    updateWindUI(data.current_weather.winddirection);
 
 const currentTime = new Date(data.current_weather.time);
 
@@ -258,3 +257,26 @@ if ("serviceWorker" in navigator) {
   });
 }
 
+function getWindDirection(deg) {
+  const directions = [
+    "N","NNE","NE","ENE",
+    "E","ESE","SE","SSE",
+    "S","SSW","SW","WSW",
+    "W","WNW","NW","NNW"
+  ];
+  return directions[Math.round(deg / 22.5) % 16];
+}
+
+function updateWindUI(degree) {
+  const arrow = document.getElementById("windArrow");
+  const text = document.getElementById("windText");
+
+  if (!arrow || !text) return; // safety
+
+  // Rotate arrow
+  arrow.style.transform = `translateX(-50%) rotate(${degree}deg)`;
+
+  // Text update
+  const dir = getWindDirection(degree);
+  text.innerText = `Direction: ${dir} (${degree}°)`;
+}
