@@ -107,6 +107,7 @@ const getWeatherByCoords = async (lat, lon, cityName) => {
       data.current_weather.windspeed + " km/h";
   // compass update
     updateWindUI(data.current_weather.winddirection);
+    console.log("Wind Degree:", data.current_weather.winddirection);
 
 const currentTime = new Date(data.current_weather.time);
 
