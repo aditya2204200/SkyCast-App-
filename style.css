@@ -545,14 +545,17 @@ body.night-mode #usage p {
 /* ===== Heading Center Fix ===== */
 
 
-.container.my-5 {
-  display: flex;
-  justify-content: center;
+#about {
+  margin-bottom: 80px;
+}
+
+#usage {
+  margin-top: 40px;
 }
 
 .container.my-5 .card {
-  width: 400px;   /* 🔥 fixed size */
-  max-width: 90%;
+  max-width: 500px;
+  margin: auto;
 }
 
 .card {
