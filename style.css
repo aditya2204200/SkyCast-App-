@@ -238,21 +238,39 @@ body.night-mode #usage p {
 }
 
 /*======================Some other place*===========================*/
+/* ================= COMMON PLACES CENTER FIX ================= */
 .dynamic-table {
-  background-color: rgba(0, 123, 255, 0.5);
-
-  max-width: 900px;   
-  margin: 40px auto; 
+  max-width: 900px;
+  margin: 40px auto;
   padding: 15px;
-
-  border-radius: 10px;
+  border-radius: 15px;
 }
 
-/* table ke andar */
-.dynamic-table th,
-.dynamic-table td {
-  color: white;
-  background-color: transparent;
+/* Table ko clean center look */
+.dynamic-table table {
+  margin: auto;
+}
+
+/* Heading spacing fix */
+.display-6 {
+  text-align: center;
+  margin-top: 60px;
+  margin-bottom: 30px;
+}
+
+/* ================= CALENDAR FIX ================= */
+.calendar-section {
+  margin-top: 60px;
+}
+
+.calendar-section .card {
+  max-width: 500px;
+  margin: auto;
+}
+
+/* ================= EXTRA SPACING FIX ================= */
+.container main {
+  margin-bottom: 40px;
 }
 
 /*============================location=================================*/
@@ -524,11 +542,7 @@ body.night-mode #usage p {
 
 
 /* ===== Heading Center Fix ===== */
-.display-6 {
-  text-align: center;
-  margin-top: 60px;
-  margin-bottom: 20px;
-}
+
 
 .container.my-5 {
   display: flex;
@@ -539,6 +553,4 @@ body.night-mode #usage p {
   width: 400px;   /* 🔥 fixed size */
   max-width: 90%;
 }
-#calendar {
-  text-align: center;
-}
+
