@@ -1,4 +1,4 @@
-const CACHE_NAME = "skycast-v16"; 
+const CACHE_NAME = "skycast-v17"; 
 
 self.addEventListener("install", (event) => {
   self.skipWaiting(); //  auto activate new version
