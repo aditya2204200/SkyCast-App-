@@ -77,17 +77,36 @@ const getWeatherByCoords = async (lat, lon, cityName) => {
 
     const data = await res.json();
 
-    const rainCodes = [51, 53, 55, 61, 63, 65, 80, 81, 82];
+   const rainCodes = [51, 53, 55, 61, 63, 65, 80, 81, 82];
 
-    if (rainCodes.includes(data.current_weather.weathercode)) {
-      createRain(120);
+   // 🔥 NEW (yahi add karna hai)
+   const isRaining =
+     rainCodes.includes(data.current_weather.weathercode) ||
+     data.current_weather.windspeed > 15;
 
-      clearInterval(lightningInterval);
-      lightningInterval = setInterval(() => {
-        if (Math.random() < 0.4) createLightning();
-      }, 3000);
-    } else {
-      stopRain();
+   // 👇 ab isRaining use kar
+   if (isRaining) {
+     createRain(120);
+
+     clearInterval(lightningInterval);
+     lightningInterval = setInterval(() => {
+       if (Math.random() < 0.4) createLightning();
+     }, 3000);
+   } else {
+     stopRain();
+   }
+    if (map && marker) {
+      map.setView([lat, lon], 8);
+
+      marker
+        .setLatLng([lat, lon])
+        .bindPopup(
+          `
+       ${cityName} <br>
+       ${data.current_weather.temperature}°C
+    `,
+        )
+        .openPopup();
     }
 
     // UI update
@@ -145,6 +164,18 @@ const getWeather = async (city) => {
     const place = data.results[0];
 
     localStorage.setItem("lastCity", place.name);
+
+    // 🔥 ADD THIS (MAP SYNC)
+    if (typeof map !== "undefined" && typeof marker !== "undefined") {
+      map.flyTo([place.latitude, place.longitude], 8, {
+        animate: true,
+        duration: 1.5,
+      });
+
+      marker.setLatLng([place.latitude, place.longitude]);
+    }
+
+    // existing call
     getWeatherByCoords(place.latitude, place.longitude, place.name);
   } catch {
     alert("Search error");
@@ -288,3 +319,86 @@ function updateWindUI(degree) {
   const dir = getWindDirection(degree);
   text.innerText = `Direction: ${dir} (${degree}°)`;
 }
+
+// 🌍 MAP INIT
+let map;
+let marker;
+let lightLayer;
+let darkLayer;
+
+window.addEventListener("load", () => {
+  // 🌍 INIT MAP
+  map = L.map("map").setView([28.61, 77.23], 5);
+
+  lightLayer = L.tileLayer(
+    "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+    {
+      maxZoom: 19,
+    },
+  );
+
+  darkLayer = L.tileLayer(
+    "https://tiles.stadiamaps.com/tiles/alidade_dark/{z}/{x}/{y}{r}.png",
+    { maxZoom: 19 },
+  );
+
+  // 👉 default layer
+  lightLayer.addTo(map);
+
+  // 🌙 NIGHT MODE CHECK
+  if (document.body.classList.contains("night-mode")) {
+    map.removeLayer(lightLayer);
+    darkLayer.addTo(map);
+  }
+
+  // 📍 MARKER
+  marker = L.marker([28.61, 77.23]).addTo(map);
+
+  // 🖱️ CLICK EVENT (INSIDE LOAD 🔥)
+  map.on("click", async function (e) {
+    const lat = e.latlng.lat;
+    const lon = e.latlng.lng;
+
+    // 🔥 marker move
+    marker.setLatLng([lat, lon]);
+
+    // 🔥 camera smooth move
+    map.flyTo([lat, lon], 8, {
+      animate: true,
+      duration: 1.5,
+    });
+
+    // 👉 existing weather UI update bhi chalega
+    getWeatherByCoords(lat, lon, "Selected Location");
+
+    try {
+      const res = await fetch(
+        `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true`,
+      );
+      const data = await res.json();
+
+      const temp = data.current_weather.temperature;
+      const wind = data.current_weather.windspeed;
+
+      // 💬 POPUP
+      marker
+        .bindPopup(
+          `
+          <b>📍 Selected Location</b><br>
+          🌡️ Temp: ${temp} °C<br>
+          💨 Wind: ${wind} km/h
+        `,
+        )
+        .openPopup();
+    } catch (err) {
+      console.log("Map weather error");
+    }
+  });
+});
+// 👇 add after getting place
+map.flyTo([place.latitude, place.longitude], 8, {
+  animate: true,
+  duration: 1.5,
+});
+
+marker.setLatLng([place.latitude, place.longitude]);
