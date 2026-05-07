@@ -12,6 +12,7 @@
     />
     <link rel="stylesheet" href="style.css">
     <link rel="manifest" href="manifest.json">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
   </head>
   <body id="home">
     <div class="bg-fixed"></div>
@@ -109,7 +110,7 @@
     <div class="card-body text-center">
       <h1 id="wind">-- km/h</h1>
 
-      <!-- ✅ COMPASS -->
+      <!--  COMPASS -->
       <div class="wind-compass">
         <div class="compass-circle">
           <div class="arrow" id="windArrow"></div>
@@ -143,12 +144,18 @@
     <tbody id="commonWeather"></tbody>
   </table>
 </div>
-      <div class="calendar-section">
-  <div class="card shadow p-4">
-    <h3 class="text-center mb-3">📅 Calendar</h3>
-    <div class="text-center">
-      <input type="date" id="calendar" class="form-control w-50 mx-auto">
-    </div>
+     <!--  Smart Weather Map -->
+      <div class="map-section">
+          <div class="card shadow p-4">
+         <h3 class="text-center mb-3"> Live Weather Map</h3>
+
+        <div id="map" style="height:400px; border-radius:15px;">
+
+      </div>
+
+    <p class="text-center mt-2 text-muted">
+      Click anywhere on map to get weather
+    </p>
   </div>
 </div>
 
@@ -253,14 +260,6 @@
       </div>
 
       <!-- Step 5 -->
-      <div class="col-md-12">
-        <div class="p-3 rounded bg-light shadow-sm">
-          <h5> Use Built-in Calendar</h5>
-          <p class="mb-0">
-            Keep track of dates while checking weather updates with the integrated calendar.
-          </p>
-        </div>
-      </div>
 
     </div>
 
@@ -302,5 +301,6 @@
     ></script>
     <script type="module" src="script.js"></script>
     <script src="service-worker.js"></script>
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
   </body>
 </html>
