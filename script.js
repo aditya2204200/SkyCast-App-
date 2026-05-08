@@ -1,404 +1,657 @@
-// 🌤️ Dynamic Background + Clouds
-const setDynamicBackground = () => {
-  const hour = new Date().getHours();
-  const bg = document.querySelector(".bg-fixed");
-  const body = document.body;
-  const clouds = document.querySelector(".clouds");
-
-  if (!bg) return;
-
-  bg.className = "bg-fixed";
-  body.classList.remove("night-mode");
-
-  if (clouds) clouds.style.display = "none";
-
-  if (hour >= 5 && hour < 11) {
-    bg.classList.add("bg-morning");
-    if (clouds) clouds.style.display = "block";
-  } else if (hour >= 11 && hour < 16) {
-    bg.classList.add("bg-afternoon");
-  } else if (hour >= 16 && hour < 19) {
-    bg.classList.add("bg-evening");
-    if (clouds) {
-      clouds.style.display = "block";
-      clouds.style.opacity = "0.2";
-    }
-  } else {
-    bg.classList.add("bg-night");
-    body.classList.add("night-mode");
-  }
-};
-
-//  Rain
-let lightningInterval;
-
-const createRain = (count = 100) => {
-  const rain = document.querySelector(".rain");
-  if (!rain) return;
-
-  rain.innerHTML = "";
-
-  for (let i = 0; i < count; i++) {
-    const drop = document.createElement("div");
-    drop.className = "drop";
-    drop.style.left = Math.random() * 100 + "vw";
-    drop.style.animationDuration = 0.5 + Math.random() + "s";
-    rain.appendChild(drop);
-  }
-};
-
-const stopRain = () => {
-  const rain = document.querySelector(".rain");
-  if (rain) rain.innerHTML = "";
-
-  clearInterval(lightningInterval);
-};
-
-//  Lightning
-const createLightning = () => {
-  const container = document.querySelector(".lightning");
-  if (!container) return;
-
-  const flash = document.createElement("div");
-  flash.className = "flash";
-  container.appendChild(flash);
-
-  setTimeout(() => flash.remove(), 200);
-};
-
-//  Weather API
-const getWeatherByCoords = async (lat, lon, cityName) => {
-  try {
-    setDynamicBackground();
-
-    const res = await fetch(
-      `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true&hourly=relativehumidity_2m&daily=temperature_2m_max,temperature_2m_min&timezone=auto`,
-    );
-
-    const data = await res.json();
-
-   const rainCodes = [51, 53, 55, 61, 63, 65, 80, 81, 82];
-
-   // 🔥 NEW (yahi add karna hai)
-   const isRaining =
-     rainCodes.includes(data.current_weather.weathercode) ||
-     data.current_weather.windspeed > 15;
-
-   // 👇 ab isRaining use kar
-   if (isRaining) {
-     createRain(120);
-
-     clearInterval(lightningInterval);
-     lightningInterval = setInterval(() => {
-       if (Math.random() < 0.4) createLightning();
-     }, 3000);
-   } else {
-     stopRain();
-   }
-    if (map && marker) {
-      map.setView([lat, lon], 8);
-
-      marker
-        .setLatLng([lat, lon])
-        .bindPopup(
-          `
-       ${cityName} <br>
-       ${data.current_weather.temperature}°C
-    `,
-        )
-        .openPopup();
-    }
-
-    // UI update
-    document.getElementById("cityName").innerHTML =
-      `<i class="bi bi-geo-alt-fill"></i> ${cityName}`;
-
-    document.getElementById("temp").innerText =
-      data.current_weather.temperature + " °C";
-
-    document.getElementById("min_temp").innerText =
-      data.daily.temperature_2m_min[0] + " °C";
-
-    document.getElementById("max_temp").innerText =
-      data.daily.temperature_2m_max[0] + " °C";
-
-    document.getElementById("wind").innerText =
-      data.current_weather.windspeed + " km/h";
-    // compass update
-    updateWindUI(data.current_weather.winddirection);
-    console.log("Wind Degree:", data.current_weather.winddirection);
-
-    const currentTime = new Date(data.current_weather.time);
-
-    // find closest time index
-    let closestIndex = 0;
-    let minDiff = Infinity;
-
-    data.hourly.time.forEach((t, index) => {
-      const diff = Math.abs(new Date(t) - currentTime);
-      if (diff < minDiff) {
-        minDiff = diff;
-        closestIndex = index;
-      }
-    });
-
-    document.getElementById("humidity").innerText =
-      data.hourly.relativehumidity_2m[closestIndex] + " %";
-
-    document.getElementById("errorMsg").innerText = "";
-  } catch {
-    document.getElementById("errorMsg").innerText = "⚠️ Weather error";
-  }
-};
-
-//  City search
-const getWeather = async (city) => {
-  try {
-    const geo = await fetch(
-      `https://geocoding-api.open-meteo.com/v1/search?name=${city}`,
-    );
-    const data = await geo.json();
-
-    if (!data.results) return alert("City not found");
-
-    const place = data.results[0];
-
-    localStorage.setItem("lastCity", place.name);
-
-    // 🔥 ADD THIS (MAP SYNC)
-    if (typeof map !== "undefined" && typeof marker !== "undefined") {
-      map.flyTo([place.latitude, place.longitude], 8, {
-        animate: true,
-        duration: 1.5,
-      });
-
-      marker.setLatLng([place.latitude, place.longitude]);
-    }
-
-    // existing call
-    getWeatherByCoords(place.latitude, place.longitude, place.name);
-  } catch {
-    alert("Search error");
-  }
-};
-
-//  Common cities
-const loadCommonPlaces = async () => {
-  const cities = ["Delhi", "Mumbai", "Kolkata", "Chennai", "Bangalore"];
-  const table = document.getElementById("commonWeather");
-
-  table.innerHTML = "";
-
-  for (let city of cities) {
-    try {
-      const geo = await fetch(
-        `https://geocoding-api.open-meteo.com/v1/search?name=${city}`,
-      );
-      const g = await geo.json();
-
-      if (!g.results) continue;
-
-      const { latitude, longitude, name } = g.results[0];
-
-      const res = await fetch(
-        `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current_weather=true`,
-      );
-      const d = await res.json();
-
-      table.innerHTML += `
-        <tr>
-          <td>${name}</td>
-          <td>${d.current_weather.temperature}</td>
-          <td>${d.current_weather.windspeed}</td>
-        </tr>`;
-    } catch {}
-  }
-};
-
-//  LOAD
-window.addEventListener("load", () => {
-  setDynamicBackground();
-  loadCommonPlaces();
-
-  const popup = document.getElementById("locationPopup");
-  popup?.classList.add("show");
-
-  document.getElementById("allowLocation").onclick = async () => {
-    popup?.classList.remove("show");
-
-    navigator.geolocation.getCurrentPosition(
-      async (pos) => {
-        const lat = pos.coords.latitude;
-        const lon = pos.coords.longitude;
-
-        let cityName = " Your Location";
-
-        try {
-          const res = await fetch(
-            `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lon}&localityLanguage=en`,
-          );
-
-          const data = await res.json();
-
-          cityName =
-            data.city ||
-            data.locality ||
-            data.principalSubdivision ||
-            data.localityInfo?.administrative?.[2]?.name ||
-            " Your Location";
-        } catch (err) {
-          console.log("City fetch error");
-        }
-
-        getWeatherByCoords(lat, lon, cityName);
-      },
-      () => getWeather("Delhi"),
-    );
-  };
-
-  document.getElementById("denyLocation").onclick = () => {
-    popup?.classList.remove("show");
-    getWeather(localStorage.getItem("lastCity") || "Delhi");
-  };
-});
-
-//  Search
-document.getElementById("searchForm").addEventListener("submit", (e) => {
-  e.preventDefault();
-  const city = document.getElementById("city").value.trim();
-  if (city) getWeather(city);
-});
-
-//  Navbar shrink
-window.addEventListener("scroll", () => {
-  document
-    .querySelector(".navbar")
-    ?.classList.toggle("shrink", window.scrollY > 50);
-});
-
-if ("serviceWorker" in navigator) {
-  navigator.serviceWorker.register("service-worker.js");
-
-  navigator.serviceWorker.addEventListener("controllerchange", () => {
-    window.location.reload(); // 🔥 auto reload on update
-  });
+html {
+  scroll-behavior: smooth;
 }
 
-function getWindDirection(deg) {
-  const directions = [
-    "N",
-    "NNE",
-    "NE",
-    "ENE",
-    "E",
-    "ESE",
-    "SE",
-    "SSE",
-    "S",
-    "SSW",
-    "SW",
-    "WSW",
-    "W",
-    "WNW",
-    "NW",
-    "NNW",
-  ];
-  return directions[Math.round(deg / 22.5) % 16];
+ .container {
+  margin-top: 80px;
 }
 
-function updateWindUI(degree) {
-  const arrow = document.getElementById("windArrow");
-  const text = document.getElementById("windText");
-
-  if (!arrow || !text) return; // safety
-
-  // Rotate arrow
-  arrow.style.transform = `translateX(-50%) rotate(${degree}deg)`;
-
-  // Text update
-  const dir = getWindDirection(degree);
-  text.innerText = `Direction: ${dir} (${degree}°)`;
+.navbar-brand img {
+  border-radius: 50%; /* round logo */
+}
+ /*==========================Logo=============*/
+.navbar-brand img {
+  box-shadow: 0 0 10px rgba(255,255,255,0.5);
 }
 
-// 🌍 MAP INIT
-let map;
-let marker;
-let lightLayer;
-let darkLayer;
+/* 🌌 Background */
+.bg-fixed {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
 
-window.addEventListener("load", () => {
-  // 🌍 INIT MAP
-  map = L.map("map").setView([28.61, 77.23], 5);
+  background-size: 110%; /* thoda zoom for movement */
+  background-position: center;
+  background-repeat: no-repeat;
 
-  lightLayer = L.tileLayer(
-    "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-    {
-      maxZoom: 19,
-    },
-  );
+  animation: bgMove 90s linear infinite;
+}
+@keyframes bgMove {
+  0% {
+    background-position: center top;
+  }
+  50% {
+    background-position: center bottom;
+  }
+  100% {
+    background-position: center top;
+  }
+}
 
-  darkLayer = L.tileLayer(
-    "https://tiles.stadiamaps.com/tiles/alidade_dark/{z}/{x}/{y}{r}.png",
-    { maxZoom: 19 },
-  );
+/* 💎 Glass Cards (DAY MODE) */
+.card {
+  background: rgba(255, 255, 255, 0.2) !important;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
 
-  // 👉 default layer
-  lightLayer.addTo(map);
+  border-radius: 15px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
 
-  // 🌙 NIGHT MODE CHECK
-  if (document.body.classList.contains("night-mode")) {
-    map.removeLayer(lightLayer);
-    darkLayer.addTo(map);
+  color: #000;
+}
+
+/* Card header */
+.card-header {
+  background: rgba(255, 255, 255, 0.3) !important;
+  border-bottom: none;
+  color: #000;
+}
+
+/* 🌐 Navbar (DAY MODE) */
+.navbar {
+  background: rgba(255, 255, 255, 0.3) !important;
+  backdrop-filter: blur(10px);
+}
+
+/* 🌅 Background images */
+.bg-morning {
+  background-image: url("images/morning.png");
+}
+
+.bg-afternoon {
+  background-image: url("images/afternoon_.png");
+}
+
+.bg-evening {
+  background-image: url("images/evening.png");
+}
+
+.bg-night {
+  background-image: url("images/night.png");
+}
+
+/* ========================= */
+/* 🌙 NIGHT MODE START */
+/* ========================= */
+
+body.night-mode {
+  color: #ffffff;
+}
+
+/* 🔥 Sab text pure white */
+body.night-mode h1,
+body.night-mode h2,
+body.night-mode h4,
+body.night-mode p,
+body.night-mode span,
+body.night-mode div {
+  color: #ffffff !important;
+}
+
+/* 💎 Cards dark (contrast fix) */
+body.night-mode .card {
+  background: rgba(0, 0, 0, 0.7) !important;
+  color: #ffffff !important;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Card header dark */
+body.night-mode .card-header {
+  background: rgba(0, 0, 0, 0.6) !important;
+  color: #ffffff !important;
+}
+
+/* 🌐 Navbar dark */
+body.night-mode .navbar {
+  background: rgba(0, 0, 0, 0.6) !important;
+}
+
+body.night-mode .navbar a {
+  color: #ffffff !important;
+}
+
+/* 🔍 Input fields */
+body.night-mode input {
+  background: rgba(255, 255, 255, 0.15) !important;
+  color: #ffffff !important;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+/* ✨ Heading visibility boost */
+body.night-mode h1,
+body.night-mode h2 {
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.6);
+}
+
+/* ========================= */
+/* 🌙 NIGHT MODE END */
+/* ========================= */
+
+
+
+
+/* =================================rain==============================*/
+
+.rain {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.drop {
+  position: absolute;
+  bottom: 100%;
+  width: 2px;
+  height: 20px;
+  background: rgba(255,255,255,0.6);
+  animation: fall linear infinite;
+}
+
+@keyframes fall {
+  to {
+    transform: translateY(100vh);
+  }
+}
+
+
+
+
+/*========================================= For Navbar ======================================*/
+/* 📌 Default navbar */
+.navbar {
+  transition: all 0.3s ease;
+  padding: 15px 20px;
+}
+
+/* 🔽 Shrink state */
+.navbar.shrink {
+  padding: 5px 20px;
+  background: rgba(0, 0, 0, 0.7) !important; /* dark glass */
+  backdrop-filter: blur(10px);
+}
+.navbar-brand {
+  transition: 0.3s;
+  font-size: 1.5rem;
+}
+
+.navbar.shrink .navbar-brand {
+  font-size: 1.2rem;
+}
+
+
+
+/*==========================Usage Guide===============================*/
+/* 🌙 Usage Guide fix (night mode) */
+body.night-mode #usage .bg-light {
+  background: rgba(0, 0, 0, 0.6) !important;
+}
+
+body.night-mode #usage h5,
+body.night-mode #usage p {
+  color: #ffffff !important;
+}
+
+
+/*=============================Ligktining========================*/
+/* ⚡ Lightning Effect */
+.lightning {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.flash {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: white;
+  opacity: 0;
+  animation: flash 0.2s ease-in-out;
+}
+
+@keyframes flash {
+  0% { opacity: 0; }
+  50% { opacity: 0.8; }
+  100% { opacity: 0; }
+}
+
+/*======================Some other place*===========================*/
+/* ================= COMMON PLACES CENTER FIX ================= */
+.dynamic-table {
+  max-width: 900px;
+  margin: 40px auto;
+  padding: 15px;
+  border-radius: 15px;
+}
+
+/* Table ko clean center look */
+.dynamic-table table {
+  margin: auto;
+}
+
+/* Heading spacing fix */
+.display-6 {
+  text-align: center;
+  margin-top: 60px;
+  margin-bottom: 30px;
+}
+
+
+
+/* ================= EXTRA SPACING FIX ================= */
+.container main {
+  margin-bottom: 40px;
+}
+
+/*============================location=================================*/
+/* Location Button */
+/*  BACKDROP */
+.location-popup {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+
+  background: radial-gradient(circle at center, rgba(0,0,0,0.4), rgba(0,0,0,0.8));
+  backdrop-filter: blur(10px);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  z-index: 9999;
+
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.4s ease;
+}
+
+.location-popup.show {
+  opacity: 1;
+  pointer-events: all;
+}
+
+/* 💎 GLASS POPUP */
+.popup-box {
+  position: relative;
+
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(25px);
+  -webkit-backdrop-filter: blur(25px);
+
+  border-radius: 20px;
+  padding: 30px;
+  width: 340px;
+
+  text-align: center;
+  color: #fff;
+
+  border: 1px solid rgba(255,255,255,0.2);
+
+  /* Glow */
+  box-shadow:
+    0 0 25px rgba(0, 150, 255, 0.3),
+    0 0 60px rgba(0, 150, 255, 0.15);
+
+  animation: popupEnter 0.5s ease, float 3s ease-in-out infinite;
+}
+
+/* ✨ Glow border effect */
+.popup-box::before {
+  content: "";
+  position: absolute;
+  inset: -2px;
+
+  border-radius: 22px;
+  background: linear-gradient(135deg, #00c6ff, #0072ff, #00c6ff);
+
+  z-index: -1;
+  filter: blur(10px);
+  opacity: 0.6;
+}
+
+/* 🎬 ENTRY ANIMATION */
+@keyframes popupEnter {
+  from {
+    transform: scale(0.7) translateY(40px);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1) translateY(0);
+    opacity: 1;
+  }
+}
+
+/* 🌊 FLOATING EFFECT */
+@keyframes float {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-8px); }
+  100% { transform: translateY(0px); }
+}
+
+/* 🎯 TEXT */
+.popup-box h4 {
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+.popup-box p {
+  font-size: 14px;
+  opacity: 0.85;
+}
+
+/* 🔘 BUTTONS */
+.popup-actions {
+  margin-top: 20px;
+  display: flex;
+  justify-content: space-between;
+}
+
+/* ✅ Allow Button (Glow) */
+.btn-allow {
+  flex: 1;
+  margin-right: 8px;
+
+  background: linear-gradient(135deg, #00c6ff, #0072ff);
+  border: none;
+  padding: 10px;
+  border-radius: 12px;
+
+  color: #fff;
+  font-weight: 500;
+  cursor: pointer;
+
+  box-shadow: 0 0 15px rgba(0, 150, 255, 0.5);
+  transition: 0.3s;
+}
+
+.btn-allow:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 25px rgba(0, 150, 255, 0.8);
+}
+
+/* ❌ Deny Button */
+.btn-deny {
+  flex: 1;
+
+  background: rgba(255,255,255,0.1);
+  border: none;
+  padding: 10px;
+  border-radius: 12px;
+
+  color: #fff;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.btn-deny:hover {
+  background: rgba(255,255,255,0.2);
+}
+
+
+
+/* ===== MOBILE BACKGROUND FIX ===== */
+@media (max-width: 768px) {
+  .bg-morning {
+    background-image: url("images/morning-mobile.png");
   }
 
-  // 📍 MARKER
-  marker = L.marker([28.61, 77.23]).addTo(map);
+  .bg-afternoon {
+    background-image: url("images/afternoon-mobile.png");
+  }
 
-  // 🖱️ CLICK EVENT (INSIDE LOAD 🔥)
-  map.on("click", async function (e) {
-    const lat = e.latlng.lat;
-    const lon = e.latlng.lng;
+  .bg-evening {
+    background-image: url("images/evening-mobile.png");
+  }
 
-    // 🔥 marker move
-    marker.setLatLng([lat, lon]);
+  .bg-night {
+    background-image: url("images/night-mobile.png");
+  }
+}
 
-    // 🔥 camera smooth move
-    map.flyTo([lat, lon], 8, {
-      animate: true,
-      duration: 1.5,
-    });
 
-    // 👉 existing weather UI update bhi chalega
-    getWeatherByCoords(lat, lon, "Selected Location");
+@media (max-width: 768px) {
+  .bg-fixed {
+    animation: bgMove 120s linear infinite; /* slow movement */
+    background-size: cover;
+    background-position: center;
+  }
+}
+.clouds {
+  display: none;
+}
 
-    try {
-      const res = await fetch(
-        `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true`,
-      );
-      const data = await res.json();
+@media (max-width: 768px) {
+  .clouds {
+    display: block;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 200%;
+    height: 100%;
+    z-index: -1;
 
-      const temp = data.current_weather.temperature;
-      const wind = data.current_weather.windspeed;
+    background: url("images/clouds.png") repeat-x;
+    background-size: contain;
 
-      // 💬 POPUP
-      marker
-        .bindPopup(
-          `
-          <b>📍 Selected Location</b><br>
-          🌡️ Temp: ${temp} °C<br>
-          💨 Wind: ${wind} km/h
-        `,
-        )
-        .openPopup();
-    } catch (err) {
-      console.log("Map weather error");
-    }
-  });
-});
-// 👇 add after getting place
-map.flyTo([place.latitude, place.longitude], 8, {
-  animate: true,
-  duration: 1.5,
-});
+    opacity: 0.3;
+    pointer-events: none;
 
-marker.setLatLng([place.latitude, place.longitude]);
+    animation: cloudMove 120s linear infinite;
+  }
+}
+
+/* ================= WIND COMPASS FIX ================= */
+
+
+
+/*  Only Wind card ko center karo */
+.wind-card .card-body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Compass container */
+.wind-compass {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: -10px;
+  transform: scale(0.8);
+}
+
+/* Circle size FIX (pehle bada tha) */
+.compass-circle {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  border: 3px solid rgba(255,255,255,0.4);
+  position: relative;
+  margin: auto;
+}
+
+/* Arrow FIX */
+.arrow {
+  width: 3px;
+  height: 40px;
+  background: red;
+  position: absolute;
+  top: 25px;
+  left: 50%;
+  transform-origin: bottom center;
+  transform: translateX(-50%) rotate(0deg);
+  border-radius: 2px;
+  transition: transform 0.6s ease-in-out;
+}
+
+/*  FIXED COMMENT (important) */
+.arrow::after {
+  content: "";
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 6px solid transparent;
+  border-bottom: 10px solid red;
+}
+
+/* Directions */
+.direction {
+  position: absolute;
+  font-weight: bold;
+  font-size: 12px;
+  color: white;
+}
+
+.north { top: 5px; left: 50%; transform: translateX(-50%); }
+.south { bottom: 5px; left: 50%; transform: translateX(-50%); }
+.east  { right: 5px; top: 50%; transform: translateY(-50%); }
+.west  { left: 5px; top: 50%; transform: translateY(-50%); }
+
+
+/* ===== Heading Center Fix ===== */
+
+
+/* 🌟 SECTION GLASS PANEL */
+#usage, #about {
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+
+  border-radius: 20px;
+  padding: 30px;
+
+  margin: 80px auto;
+  max-width: 1100px;
+
+  border: 1px solid rgba(255,255,255,0.2);
+}
+#usage .row > div {
+  margin-bottom: 20px;
+}
+
+#about ul {
+  padding-left: 20px;
+}
+#usage h2,
+#about h2 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+#usage p.text-center,
+#about p {
+  text-align: center;
+  opacity: 0.9;
+}
+body.night-mode #usage,
+body.night-mode #about {
+  background: rgba(0, 0, 0, 0.6);
+}
+
+body.night-mode #usage .card,
+body.night-mode #about .card {
+  background: rgba(0, 0, 0, 0.7);
+}
+
+#usage .card,
+#about .card {
+  width: 100%;
+}
+
+/*  ONLY weather cards */
+main .card {
+  min-height: 260px;
+  height: auto;
+}
+
+
+
+
+
+
+.map-section {
+  margin-top: 60px;
+  display: flex;
+  justify-content: center;
+}
+
+.map-section .card {
+  max-width: 800px;   
+  width: 100%;
+
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+#map {
+  height: 350px;
+  width: 100%;
+  border-radius: 15px;
+
+  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+  overflow: hidden;
+
+  position: relative;
+  z-index: 10;
+}
+
+/*  Mobile Map Fix */
+@media (max-width: 768px) {
+  #map {
+    height: 260px;
+  }
+}
+.rain,
+.clouds,
+.lightning {
+  pointer-events: none;
+}
+/* ===== MAP POPUP FIX ===== */
+
+.leaflet-popup-content p,
+.leaflet-popup-content h6,
+.leaflet-popup-content div {
+  color: #fff !important;
+  text-align: center;
+}
+
+.leaflet-popup-content-wrapper {
+  background: rgba(0, 0, 0, 0.85) !important;
+  color: white !important;
+  border-radius: 12px;
+}
+
+.leaflet-popup-content {
+  color: white !important;
+  font-weight: 500;
+}
+
+.leaflet-popup-tip {
+  background: rgba(0, 0, 0, 0.85) !important;
+}
