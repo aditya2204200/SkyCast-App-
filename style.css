@@ -14,7 +14,7 @@ html {
   box-shadow: 0 0 10px rgba(255,255,255,0.5);
 }
 
-/* 🌌 Background */
+/*  Background */
 .bg-fixed {
   position: fixed;
   top: 0;
@@ -41,7 +41,7 @@ html {
   }
 }
 
-/* 💎 Glass Cards (DAY MODE) */
+/*  Glass Cards (DAY MODE) */
 .card {
   background: rgba(255, 255, 255, 0.2) !important;
   backdrop-filter: blur(10px);
@@ -60,13 +60,13 @@ html {
   color: #000;
 }
 
-/* 🌐 Navbar (DAY MODE) */
+/*  Navbar (DAY MODE) */
 .navbar {
   background: rgba(255, 255, 255, 0.3) !important;
   backdrop-filter: blur(10px);
 }
 
-/* 🌅 Background images */
+/*  Background images */
 .bg-morning {
   background-image: url("images/morning.png");
 }
@@ -84,14 +84,14 @@ html {
 }
 
 /* ========================= */
-/* 🌙 NIGHT MODE START */
+/*  NIGHT MODE START */
 /* ========================= */
 
 body.night-mode {
   color: #ffffff;
 }
 
-/* 🔥 Sab text pure white */
+/*  Sab text pure white */
 body.night-mode h1,
 body.night-mode h2,
 body.night-mode h4,
@@ -101,7 +101,7 @@ body.night-mode div {
   color: #ffffff !important;
 }
 
-/* 💎 Cards dark (contrast fix) */
+/*  Cards dark (contrast fix) */
 body.night-mode .card {
   background: rgba(0, 0, 0, 0.7) !important;
   color: #ffffff !important;
@@ -114,7 +114,7 @@ body.night-mode .card-header {
   color: #ffffff !important;
 }
 
-/* 🌐 Navbar dark */
+/*  Navbar dark */
 body.night-mode .navbar {
   background: rgba(0, 0, 0, 0.6) !important;
 }
@@ -123,21 +123,21 @@ body.night-mode .navbar a {
   color: #ffffff !important;
 }
 
-/* 🔍 Input fields */
+/*  Input fields */
 body.night-mode input {
   background: rgba(255, 255, 255, 0.15) !important;
   color: #ffffff !important;
   border: 1px solid rgba(255, 255, 255, 0.3);
 }
 
-/* ✨ Heading visibility boost */
+/*  Heading visibility boost */
 body.night-mode h1,
 body.night-mode h2 {
   text-shadow: 0 0 10px rgba(255, 255, 255, 0.6);
 }
 
 /* ========================= */
-/* 🌙 NIGHT MODE END */
+/*  NIGHT MODE END */
 /* ========================= */
 
 
@@ -175,13 +175,13 @@ body.night-mode h2 {
 
 
 /*========================================= For Navbar ======================================*/
-/* 📌 Default navbar */
+/*  Default navbar */
 .navbar {
   transition: all 0.3s ease;
   padding: 15px 20px;
 }
 
-/* 🔽 Shrink state */
+/*  Shrink state */
 .navbar.shrink {
   padding: 5px 20px;
   background: rgba(0, 0, 0, 0.7) !important; /* dark glass */
@@ -199,7 +199,7 @@ body.night-mode h2 {
 
 
 /*==========================Usage Guide===============================*/
-/* 🌙 Usage Guide fix (night mode) */
+/*  Usage Guide fix (night mode) */
 body.night-mode #usage .bg-light {
   background: rgba(0, 0, 0, 0.6) !important;
 }
@@ -211,7 +211,7 @@ body.night-mode #usage p {
 
 
 /*=============================Ligktining========================*/
-/* ⚡ Lightning Effect */
+/*  Lightning Effect */
 .lightning {
   position: fixed;
   top: 0;
@@ -294,7 +294,7 @@ body.night-mode #usage p {
   pointer-events: all;
 }
 
-/* 💎 GLASS POPUP */
+/*  GLASS POPUP */
 .popup-box {
   position: relative;
 
@@ -319,7 +319,7 @@ body.night-mode #usage p {
   animation: popupEnter 0.5s ease, float 3s ease-in-out infinite;
 }
 
-/* ✨ Glow border effect */
+/*  Glow border effect */
 .popup-box::before {
   content: "";
   position: absolute;
@@ -333,7 +333,7 @@ body.night-mode #usage p {
   opacity: 0.6;
 }
 
-/* 🎬 ENTRY ANIMATION */
+/*  ENTRY ANIMATION */
 @keyframes popupEnter {
   from {
     transform: scale(0.7) translateY(40px);
@@ -345,14 +345,14 @@ body.night-mode #usage p {
   }
 }
 
-/* 🌊 FLOATING EFFECT */
+/*  FLOATING EFFECT */
 @keyframes float {
   0% { transform: translateY(0px); }
   50% { transform: translateY(-8px); }
   100% { transform: translateY(0px); }
 }
 
-/* 🎯 TEXT */
+/*  TEXT */
 .popup-box h4 {
   font-weight: 600;
   margin-bottom: 10px;
@@ -363,14 +363,14 @@ body.night-mode #usage p {
   opacity: 0.85;
 }
 
-/* 🔘 BUTTONS */
+/* BUTTONS */
 .popup-actions {
   margin-top: 20px;
   display: flex;
   justify-content: space-between;
 }
 
-/* ✅ Allow Button (Glow) */
+/*  Allow Button (Glow) */
 .btn-allow {
   flex: 1;
   margin-right: 8px;
@@ -393,7 +393,7 @@ body.night-mode #usage p {
   box-shadow: 0 0 25px rgba(0, 150, 255, 0.8);
 }
 
-/* ❌ Deny Button */
+/*  Deny Button */
 .btn-deny {
   flex: 1;
 
@@ -537,7 +537,7 @@ body.night-mode #usage p {
 /* ===== Heading Center Fix ===== */
 
 
-/* 🌟 SECTION GLASS PANEL */
+/*  SECTION GLASS PANEL */
 #usage, #about {
   background: rgba(255, 255, 255, 0.15);
   backdrop-filter: blur(15px);
@@ -604,21 +604,54 @@ main .card {
 .map-section .card {
   max-width: 800px;   
   width: 100%;
+
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
 }
 
 #map {
-  height: 280px;
+  height: 350px;
   width: 100%;
   border-radius: 15px;
 
   box-shadow: 0 10px 30px rgba(0,0,0,0.3);
   overflow: hidden;
 
-  position: relative;   
-  z-index: 10;          
+  position: relative;
+  z-index: 10;
+}
+
+/*  Mobile Map Fix */
+@media (max-width: 768px) {
+  #map {
+    height: 260px;
+  }
 }
 .rain,
 .clouds,
 .lightning {
   pointer-events: none;
+}
+/* ===== MAP POPUP FIX ===== */
+
+.leaflet-popup-content p,
+.leaflet-popup-content h6,
+.leaflet-popup-content div {
+  color: #fff !important;
+  text-align: center;
+}
+
+.leaflet-popup-content-wrapper {
+  background: rgba(0, 0, 0, 0.85) !important;
+  color: white !important;
+  border-radius: 12px;
+}
+
+.leaflet-popup-content {
+  color: white !important;
+  font-weight: 500;
+}
+
+.leaflet-popup-tip {
+  background: rgba(0, 0, 0, 0.85) !important;
 }
