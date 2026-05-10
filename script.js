@@ -1,4 +1,4 @@
-//  Dynamic Background + Clouds
+// 🌤️ Dynamic Background + Clouds
 const setDynamicBackground = () => {
   const hour = new Date().getHours();
   const bg = document.querySelector(".bg-fixed");
@@ -77,24 +77,24 @@ const getWeatherByCoords = async (lat, lon, cityName) => {
 
     const data = await res.json();
 
-   const rainCodes = [51, 53, 55, 61, 63, 65, 80, 81, 82];
+    const rainCodes = [51, 53, 55, 61, 63, 65, 80, 81, 82];
 
-   //  NEW (yahi add karna hai)
-   const isRaining =
-     rainCodes.includes(data.current_weather.weathercode) ||
-     data.current_weather.windspeed > 15;
+    // 🔥 NEW (yahi add karna hai)
+    const isRaining =
+      rainCodes.includes(data.current_weather.weathercode) ||
+      data.current_weather.windspeed > 15;
 
-   // ab isRaining use kar
-   if (isRaining) {
-     createRain(120);
+    // 👇 ab isRaining use kar
+    if (isRaining) {
+      createRain(120);
 
-     clearInterval(lightningInterval);
-     lightningInterval = setInterval(() => {
-       if (Math.random() < 0.4) createLightning();
-     }, 3000);
-   } else {
-     stopRain();
-   }
+      clearInterval(lightningInterval);
+      lightningInterval = setInterval(() => {
+        if (Math.random() < 0.4) createLightning();
+      }, 3000);
+    } else {
+      stopRain();
+    }
     if (map && marker) {
       map.setView([lat, lon], 8);
 
@@ -121,9 +121,8 @@ const getWeatherByCoords = async (lat, lon, cityName) => {
 
     document.getElementById("max_temp").innerText =
       data.daily.temperature_2m_max[0] + " °C";
-
-    document.getElementById("wind").innerText =
-      data.current_weather.windspeed + " km/h";
+    document.getElementById("detailWind").innerText =
+      data.current_weather.windspeed;
     // compass update
     updateWindUI(data.current_weather.winddirection);
     console.log("Wind Degree:", data.current_weather.winddirection);
@@ -145,9 +144,32 @@ const getWeatherByCoords = async (lat, lon, cityName) => {
     document.getElementById("humidity").innerText =
       data.hourly.relativehumidity_2m[closestIndex] + " %";
 
+    // 🌤️ DETAILS SECTION UPDATE
+
+    document.getElementById("detailTemp").innerText =
+      data.current_weather.temperature + "°";
+
+    document.getElementById("detailFeels").innerText =
+      data.current_weather.temperature + 4 + "°";
+
+    document.getElementById("detailActual").innerText =
+      data.current_weather.temperature + "°";
+
+    document.getElementById("detailHumidity").innerText =
+      data.hourly.relativehumidity_2m[closestIndex] + "%";
+
+
+    const weatherCode = data.current_weather.weathercode;
+
+    if (weatherCode <= 3) {
+      document.getElementById("cloudText").innerText = "Sunny";
+    } else {
+      document.getElementById("cloudText").innerText = "Cloudy";
+    }
+
     document.getElementById("errorMsg").innerText = "";
   } catch {
-    document.getElementById("errorMsg").innerText = " Weather error";
+    document.getElementById("errorMsg").innerText = "⚠️ Weather error";
   }
 };
 
@@ -165,7 +187,7 @@ const getWeather = async (city) => {
 
     localStorage.setItem("lastCity", place.name);
 
-    //  ADD THIS (MAP SYNC)
+    // 🔥 ADD THIS (MAP SYNC)
     if (typeof map !== "undefined" && typeof marker !== "undefined") {
       map.flyTo([place.latitude, place.longitude], 8, {
         animate: true,
@@ -280,7 +302,7 @@ if ("serviceWorker" in navigator) {
   navigator.serviceWorker.register("service-worker.js");
 
   navigator.serviceWorker.addEventListener("controllerchange", () => {
-    window.location.reload(); // auto reload on update
+    window.location.reload(); // 🔥 auto reload on update
   });
 }
 
@@ -307,16 +329,17 @@ function getWindDirection(deg) {
 }
 
 function updateWindUI(degree) {
-  const arrow = document.getElementById("windArrow");
-  const text = document.getElementById("windText");
+  const arrow = document.getElementById("miniArrow");
+  const text = document.getElementById("windDirectionText");
 
-  if (!arrow || !text) return; // safety
+  if (!arrow || !text) return;
 
-  // Rotate arrow
+  // rotate arrow
   arrow.style.transform = `translateX(-50%) rotate(${degree}deg)`;
 
-  // Text update
+  // direction text
   const dir = getWindDirection(degree);
+
   text.innerText = `Direction: ${dir} (${degree}°)`;
 }
 
@@ -418,3 +441,19 @@ window.addEventListener("load", () => {
   });
 });
 
+// UV DEMO DATA
+const uv = Math.floor(Math.random() * 11);
+
+document.getElementById("uvIndex").innerText = uv;
+
+let uvText = "Low";
+
+if (uv >= 3 && uv < 6) {
+  uvText = "Moderate";
+} else if (uv >= 6 && uv < 8) {
+  uvText = "High";
+} else if (uv >= 8) {
+  uvText = "Extreme";
+}
+
+document.getElementById("uvLevel").innerText = uvText;
