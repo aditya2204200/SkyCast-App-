@@ -14,7 +14,7 @@ html {
   box-shadow: 0 0 10px rgba(255,255,255,0.5);
 }
 
-/* 🌌 Background */
+/*  Background */
 .bg-fixed {
   position: fixed;
   top: 0;
@@ -41,7 +41,7 @@ html {
   }
 }
 
-/* 💎 Glass Cards (DAY MODE) */
+/*  Glass Cards (DAY MODE) */
 .card {
   background: rgba(255, 255, 255, 0.2) !important;
   backdrop-filter: blur(10px);
@@ -60,13 +60,13 @@ html {
   color: #000;
 }
 
-/* 🌐 Navbar (DAY MODE) */
+/*  Navbar (DAY MODE) */
 .navbar {
   background: rgba(255, 255, 255, 0.3) !important;
   backdrop-filter: blur(10px);
 }
 
-/* 🌅 Background images */
+/*  Background images */
 .bg-morning {
   background-image: url("images/morning.png");
 }
@@ -84,14 +84,14 @@ html {
 }
 
 /* ========================= */
-/* 🌙 NIGHT MODE START */
+/*  NIGHT MODE START */
 /* ========================= */
 
 body.night-mode {
   color: #ffffff;
 }
 
-/* 🔥 Sab text pure white */
+/*  Sab text pure white */
 body.night-mode h1,
 body.night-mode h2,
 body.night-mode h4,
@@ -101,7 +101,7 @@ body.night-mode div {
   color: #ffffff !important;
 }
 
-/* 💎 Cards dark (contrast fix) */
+/*  Cards dark (contrast fix) */
 body.night-mode .card {
   background: rgba(0, 0, 0, 0.7) !important;
   color: #ffffff !important;
@@ -114,7 +114,7 @@ body.night-mode .card-header {
   color: #ffffff !important;
 }
 
-/* 🌐 Navbar dark */
+/*  Navbar dark */
 body.night-mode .navbar {
   background: rgba(0, 0, 0, 0.6) !important;
 }
@@ -123,21 +123,21 @@ body.night-mode .navbar a {
   color: #ffffff !important;
 }
 
-/* 🔍 Input fields */
+/*  Input fields */
 body.night-mode input {
   background: rgba(255, 255, 255, 0.15) !important;
   color: #ffffff !important;
   border: 1px solid rgba(255, 255, 255, 0.3);
 }
 
-/* ✨ Heading visibility boost */
+/*  Heading visibility boost */
 body.night-mode h1,
 body.night-mode h2 {
   text-shadow: 0 0 10px rgba(255, 255, 255, 0.6);
 }
 
 /* ========================= */
-/* 🌙 NIGHT MODE END */
+/*  NIGHT MODE END */
 /* ========================= */
 
 
@@ -175,13 +175,13 @@ body.night-mode h2 {
 
 
 /*========================================= For Navbar ======================================*/
-/* 📌 Default navbar */
+/*  Default navbar */
 .navbar {
   transition: all 0.3s ease;
   padding: 15px 20px;
 }
 
-/* 🔽 Shrink state */
+/*  Shrink state */
 .navbar.shrink {
   padding: 5px 20px;
   background: rgba(0, 0, 0, 0.7) !important; /* dark glass */
@@ -199,7 +199,7 @@ body.night-mode h2 {
 
 
 /*==========================Usage Guide===============================*/
-/* 🌙 Usage Guide fix (night mode) */
+/*  Usage Guide fix (night mode) */
 body.night-mode #usage .bg-light {
   background: rgba(0, 0, 0, 0.6) !important;
 }
@@ -211,7 +211,7 @@ body.night-mode #usage p {
 
 
 /*=============================Ligktining========================*/
-/* ⚡ Lightning Effect */
+/*  Lightning Effect */
 .lightning {
   position: fixed;
   top: 0;
@@ -294,7 +294,7 @@ body.night-mode #usage p {
   pointer-events: all;
 }
 
-/* 💎 GLASS POPUP */
+/*  GLASS POPUP */
 .popup-box {
   position: relative;
 
@@ -943,3 +943,74 @@ body.night-mode .insight-card {
   opacity: 0.9;
   line-height: 1.5;
 }
+
+/* 🌍 CLIMATE SECTION */
+.climate-section {
+  margin-top: 70px;
+  margin-bottom: 70px;
+}
+
+/* 💎 Glass Card */
+.climate-card {
+  background: rgba(255,255,255,0.15);
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+
+  border-radius: 25px;
+  padding: 25px;
+
+  border: 1px solid rgba(255,255,255,0.2);
+
+  box-shadow:
+    0 10px 30px rgba(0,0,0,0.15),
+    inset 0 1px 1px rgba(255,255,255,0.08);
+
+  height: 100%;
+}
+
+/* 🌙 Night Mode */
+body.night-mode .climate-card {
+  background: rgba(0,0,0,0.55);
+  color: white;
+}
+
+/* Heading */
+.climate-card h3 {
+  margin-bottom: 25px;
+  font-weight: 600;
+}
+
+/* Rows */
+.climate-row {
+  display: flex;
+  justify-content: space-between;
+
+  padding: 15px 0;
+
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+/* Table */
+.climate-table {
+  color: inherit;
+}
+
+.climate-table th,
+.climate-table td {
+  background: transparent !important;
+  color: inherit !important;
+  border-color: rgba(255,255,255,0.1);
+}
+
+/* Mobile */
+@media(max-width:768px){
+
+  .climate-card {
+    padding: 18px;
+  }
+
+  .climate-table {
+    font-size: 14px;
+  }
+}
+
