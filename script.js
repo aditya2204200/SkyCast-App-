@@ -72,19 +72,17 @@ const getWeatherByCoords = async (lat, lon, cityName) => {
     setDynamicBackground();
 
     const res = await fetch(
-      `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true&hourly=relativehumidity_2m&daily=temperature_2m_max,temperature_2m_min&timezone=auto`,
+      `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true&hourly=relativehumidity_2m&daily=temperature_2m_max,temperature_2m_min,uv_index_max&timezone=auto`,
     );
 
     const data = await res.json();
+    
 
-    const rainCodes = [51, 53, 55, 61, 63, 65, 80, 81, 82];
+  const rainCodes = [51, 53, 55, 61, 63, 65, 80, 81, 82];
 
-    // 🔥 NEW (yahi add karna hai)
-    const isRaining =
-      rainCodes.includes(data.current_weather.weathercode) ||
-      data.current_weather.windspeed > 15;
+  const isRaining = rainCodes.includes(data.current_weather.weathercode);
 
-    // 👇 ab isRaining use kar
+    //  ab isRaining use kar
     if (isRaining) {
       createRain(120);
 
@@ -144,7 +142,30 @@ const getWeatherByCoords = async (lat, lon, cityName) => {
     document.getElementById("humidity").innerText =
       data.hourly.relativehumidity_2m[closestIndex] + " %";
 
-    // 🌤️ DETAILS SECTION UPDATE
+    //  REAL UV INDEX
+    const uv = data.daily.uv_index_max[0];
+
+    document.getElementById("uvIndex").innerText = uv;
+
+    let uvText = "Low";
+    let uvAdvice = "Safe to go outside.";
+
+    if (uv >= 3 && uv < 6) {
+      uvText = "Moderate";
+      uvAdvice = "Use sunglasses and sunscreen outdoors.";
+    } else if (uv >= 6 && uv < 8) {
+      uvText = "High";
+      uvAdvice = "Reduce direct sun exposure.";
+    } else if (uv >= 8) {
+      uvText = "Extreme";
+      uvAdvice = "Avoid going outside during peak hours.";
+    }
+
+    document.getElementById("uvLevel").innerText = uvText;
+
+    document.getElementById("uvAdvice").innerText = uvAdvice;
+
+    //  DETAILS SECTION UPDATE
 
     document.getElementById("detailTemp").innerText =
       data.current_weather.temperature + "°";
@@ -157,7 +178,6 @@ const getWeatherByCoords = async (lat, lon, cityName) => {
 
     document.getElementById("detailHumidity").innerText =
       data.hourly.relativehumidity_2m[closestIndex] + "%";
-
 
     const weatherCode = data.current_weather.weathercode;
 
@@ -187,7 +207,7 @@ const getWeather = async (city) => {
 
     localStorage.setItem("lastCity", place.name);
 
-    // 🔥 ADD THIS (MAP SYNC)
+    //  ADD THIS (MAP SYNC)
     if (typeof map !== "undefined" && typeof marker !== "undefined") {
       map.flyTo([place.latitude, place.longitude], 8, {
         animate: true,
@@ -426,34 +446,20 @@ window.addEventListener("load", () => {
       const wind = data.current_weather.windspeed;
 
       //  POPUP
-  marker
-  .bindPopup(`
+      marker
+        .bindPopup(
+          `
     <div style="text-align:center;">
       <h6> Selected Location</h6>
       <p> Temp: ${temp} °C</p>
       <p> Wind: ${wind} km/h</p>
     </div>
-  `)
-  .openPopup();
+  `,
+        )
+        .openPopup();
     } catch (err) {
       console.log("Map weather error");
     }
   });
 });
 
-// UV DEMO DATA
-const uv = Math.floor(Math.random() * 11);
-
-document.getElementById("uvIndex").innerText = uv;
-
-let uvText = "Low";
-
-if (uv >= 3 && uv < 6) {
-  uvText = "Moderate";
-} else if (uv >= 6 && uv < 8) {
-  uvText = "High";
-} else if (uv >= 8) {
-  uvText = "Extreme";
-}
-
-document.getElementById("uvLevel").innerText = uvText;
