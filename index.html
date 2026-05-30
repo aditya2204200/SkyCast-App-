@@ -353,11 +353,12 @@
 
       </div>
 
-    <p class="text-center mt-2 text-muted">
+        <p class="text-center mt-2 text-muted">
       Click anywhere on map to get weather
-    </p>
-  </div>
-</div>
+        </p>
+        </div>
+      </div>
+
 
   <section id="about" class="container my-5">
   <div class="card shadow p-4">
@@ -493,6 +494,51 @@
   <button onclick="updateApp()">Update Now</button>
 </div>
 
+<!--  FLOATING AI BUTTON -->
+
+<div class="ai-float-btn" id="openAI">
+  
+</div>
+
+<!--  AI POPUP -->
+
+<div class="ai-popup" id="aiPopup">
+
+  <!-- HEADER -->
+  <div class="ai-popup-header">
+
+    <h4>Climate AI</h4>
+
+    <button id="closeAI">✕</button>
+
+  </div>
+
+  <!-- CHAT AREA -->
+  <div class="ai-popup-chat" id="chatBox">
+
+    <div class="bot-msg">
+       Hello! Ask me anything about weather and climate.
+    </div>
+
+  </div>
+
+  <!-- INPUT -->
+  <div class="ai-popup-input">
+
+    <input
+      type="text"
+      id="userQuestion"
+      placeholder="Ask weather question..."
+    >
+
+    <button id="askAI">
+      Send
+    </button>
+
+  </div>
+
+</div>
+
 
     <script
       src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
@@ -504,4 +550,3 @@
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
   </body>
 </html>
-        
