@@ -463,3 +463,144 @@ window.addEventListener("load", () => {
   });
 });
 
+
+
+
+
+
+
+
+
+// ================= FLOATING AI =================
+
+const openAI = document.getElementById("openAI");
+
+const closeAI = document.getElementById("closeAI");
+
+const aiPopup = document.getElementById("aiPopup");
+
+const askAI = document.getElementById("askAI");
+
+const chatBox = document.getElementById("chatBox");
+
+// OPEN
+openAI.addEventListener("click", () => {
+
+  aiPopup.classList.add("show");
+
+});
+
+// CLOSE
+closeAI.addEventListener("click", () => {
+
+  aiPopup.classList.remove("show");
+
+});
+
+// SEND MESSAGE
+askAI.addEventListener("click", sendMessage);
+
+// ENTER SUPPORT
+document
+.getElementById("userQuestion")
+.addEventListener("keypress", function(e){
+
+  if(e.key === "Enter"){
+    sendMessage();
+  }
+
+});
+
+// FUNCTION
+function sendMessage(){
+
+  const input =
+    document.getElementById("userQuestion");
+
+  const question =
+    input.value.trim();
+
+  if(!question) return;
+
+  // USER MESSAGE
+  chatBox.innerHTML += `
+    <div class="user-msg">
+      ${question}
+    </div>
+  `;
+
+  // AUTO SCROLL
+  chatBox.scrollTop =
+    chatBox.scrollHeight;
+
+  input.value = "";
+
+  // BOT THINKING
+  setTimeout(() => {
+
+    let reply = "";
+
+    const q =
+      question.toLowerCase();
+
+    if(q.includes("rain")){
+
+      reply =
+      " There may be rain today.";
+
+    }
+
+    else if(q.includes("temperature")){
+
+      reply =
+      " Temperature looks moderate today.";
+
+    }
+
+    else if(q.includes("humidity")){
+
+      reply =
+      " Humidity is currently normal.";
+
+    }
+
+    else if(q.includes("wind")){
+
+      reply =
+      " Wind speed is looking stable.";
+
+    }
+
+    else if(q.includes("uv")){
+
+      reply =
+      " UV rays are strong today. Wear sunscreen.";
+
+    }
+
+    else if(q.includes("wear")){
+
+      reply =
+      " Comfortable light clothes are recommended.";
+
+    }
+
+    else{
+
+      reply =
+      " Ask me weather or climate related questions.";
+    }
+
+    // BOT MESSAGE
+    chatBox.innerHTML += `
+      <div class="bot-msg">
+        ${reply}
+      </div>
+    `;
+
+    chatBox.scrollTop =
+      chatBox.scrollHeight;
+
+  }, 700);
+
+}
