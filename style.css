@@ -14,7 +14,7 @@ html {
   box-shadow: 0 0 10px rgba(255,255,255,0.5);
 }
 
-/*  Background */
+/* 🌌 Background */
 .bg-fixed {
   position: fixed;
   top: 0;
@@ -41,7 +41,7 @@ html {
   }
 }
 
-/*  Glass Cards (DAY MODE) */
+/* 💎 Glass Cards (DAY MODE) */
 .card {
   background: rgba(255, 255, 255, 0.2) !important;
   backdrop-filter: blur(10px);
@@ -60,13 +60,13 @@ html {
   color: #000;
 }
 
-/*  Navbar (DAY MODE) */
+/* 🌐 Navbar (DAY MODE) */
 .navbar {
   background: rgba(255, 255, 255, 0.3) !important;
   backdrop-filter: blur(10px);
 }
 
-/*  Background images */
+/* 🌅 Background images */
 .bg-morning {
   background-image: url("images/morning.png");
 }
@@ -84,14 +84,14 @@ html {
 }
 
 /* ========================= */
-/*  NIGHT MODE START */
+/* 🌙 NIGHT MODE START */
 /* ========================= */
 
 body.night-mode {
   color: #ffffff;
 }
 
-/*  Sab text pure white */
+/* 🔥 Sab text pure white */
 body.night-mode h1,
 body.night-mode h2,
 body.night-mode h4,
@@ -101,7 +101,7 @@ body.night-mode div {
   color: #ffffff !important;
 }
 
-/*  Cards dark (contrast fix) */
+/* 💎 Cards dark (contrast fix) */
 body.night-mode .card {
   background: rgba(0, 0, 0, 0.7) !important;
   color: #ffffff !important;
@@ -114,7 +114,7 @@ body.night-mode .card-header {
   color: #ffffff !important;
 }
 
-/*  Navbar dark */
+/* 🌐 Navbar dark */
 body.night-mode .navbar {
   background: rgba(0, 0, 0, 0.6) !important;
 }
@@ -123,21 +123,21 @@ body.night-mode .navbar a {
   color: #ffffff !important;
 }
 
-/*  Input fields */
+/* 🔍 Input fields */
 body.night-mode input {
   background: rgba(255, 255, 255, 0.15) !important;
   color: #ffffff !important;
   border: 1px solid rgba(255, 255, 255, 0.3);
 }
 
-/*  Heading visibility boost */
+/* ✨ Heading visibility boost */
 body.night-mode h1,
 body.night-mode h2 {
   text-shadow: 0 0 10px rgba(255, 255, 255, 0.6);
 }
 
 /* ========================= */
-/*  NIGHT MODE END */
+/* 🌙 NIGHT MODE END */
 /* ========================= */
 
 
@@ -175,13 +175,13 @@ body.night-mode h2 {
 
 
 /*========================================= For Navbar ======================================*/
-/*  Default navbar */
+/* 📌 Default navbar */
 .navbar {
   transition: all 0.3s ease;
   padding: 15px 20px;
 }
 
-/*  Shrink state */
+/* 🔽 Shrink state */
 .navbar.shrink {
   padding: 5px 20px;
   background: rgba(0, 0, 0, 0.7) !important; /* dark glass */
@@ -199,7 +199,7 @@ body.night-mode h2 {
 
 
 /*==========================Usage Guide===============================*/
-/*  Usage Guide fix (night mode) */
+/* 🌙 Usage Guide fix (night mode) */
 body.night-mode #usage .bg-light {
   background: rgba(0, 0, 0, 0.6) !important;
 }
@@ -211,7 +211,7 @@ body.night-mode #usage p {
 
 
 /*=============================Ligktining========================*/
-/*  Lightning Effect */
+/* ⚡ Lightning Effect */
 .lightning {
   position: fixed;
   top: 0;
@@ -294,7 +294,7 @@ body.night-mode #usage p {
   pointer-events: all;
 }
 
-/*  GLASS POPUP */
+/* 💎 GLASS POPUP */
 .popup-box {
   position: relative;
 
@@ -1014,3 +1014,302 @@ body.night-mode .climate-card {
   }
 }
 
+
+
+
+
+
+
+/* ================= RAINBOW AI ================= */
+
+/* FLOAT BUTTON */
+.ai-float-btn{
+  position: fixed;
+
+  right: 25px;
+  bottom: 25px;
+
+  width: 72px;
+  height: 72px;
+
+  border-radius: 50%;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 2rem;
+
+  cursor: pointer;
+
+  z-index: 999999;
+
+  color: white;
+
+  background:
+    linear-gradient(
+      45deg,
+      red,
+      orange,
+      yellow,
+      green,
+      cyan,
+      blue,
+      violet,
+      red
+    );
+
+  background-size: 400% 400%;
+
+  animation:
+    rainbowMove 8s linear infinite,
+    pulseAI 2s infinite;
+
+  box-shadow:
+    0 0 25px rgba(255,255,255,0.4);
+}
+
+/* 🌈 POPUP */
+.ai-popup{
+
+  position: fixed;
+
+  right: 25px;
+  bottom: 110px;
+
+  width: 360px;
+  height: 520px;
+
+  border-radius: 28px;
+
+  overflow: hidden;
+
+  display: flex;
+  flex-direction: column;
+
+  z-index: 999999;
+
+  opacity: 0;
+  visibility: hidden;
+
+  transform: translateY(30px);
+
+  transition: all 0.4s ease;
+
+  /* RAINBOW BORDER */
+  background:
+    linear-gradient(
+      135deg,
+      rgba(255,0,0,0.4),
+      rgba(255,165,0,0.4),
+      rgba(255,255,0,0.35),
+      rgba(0,255,0,0.35),
+      rgba(0,255,255,0.35),
+      rgba(0,0,255,0.35),
+      rgba(238,130,238,0.35)
+    );
+
+  background-size: 400% 400%;
+
+  animation: rainbowMove 10s linear infinite;
+
+  backdrop-filter: blur(22px);
+  -webkit-backdrop-filter: blur(22px);
+
+  border: 2px solid rgba(255,255,255,0.18);
+
+  box-shadow:
+    0 0 40px rgba(255,255,255,0.12),
+    0 0 70px rgba(0,255,255,0.08);
+}
+
+/* OPEN */
+.ai-popup.show{
+  opacity: 1;
+  visibility: visible;
+
+  transform: translateY(0);
+}
+
+/* 🌈 HEADER */
+.ai-popup-header{
+
+  padding: 18px 20px;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  color: white;
+
+  background:
+    linear-gradient(
+      90deg,
+      red,
+      orange,
+      yellow,
+      green,
+      cyan,
+      blue,
+      violet
+    );
+
+  background-size: 400% 400%;
+
+  animation: rainbowMove 6s linear infinite;
+}
+
+/* CLOSE BUTTON */
+.ai-popup-header button{
+  background: transparent;
+  border: none;
+
+  color: white;
+
+  font-size: 1.2rem;
+
+  cursor: pointer;
+}
+
+/* CHAT AREA */
+.ai-popup-chat{
+  flex: 1;
+
+  padding: 18px;
+
+  overflow-y: auto;
+
+  display: flex;
+  flex-direction: column;
+
+  gap: 12px;
+}
+
+/* BOT MSG */
+.bot-msg{
+  align-self: flex-start;
+
+  background:
+    rgba(255,255,255,0.16);
+
+  color: white;
+
+  padding: 12px 16px;
+
+  border-radius: 18px 18px 18px 5px;
+
+  max-width: 80%;
+
+  backdrop-filter: blur(10px);
+}
+
+/* USER MSG */
+.user-msg{
+  align-self: flex-end;
+
+  background:
+    linear-gradient(
+      135deg,
+      #ff0080,
+      #7928ca,
+      #0070f3
+    );
+
+  color: white;
+
+  padding: 12px 16px;
+
+  border-radius: 18px 18px 5px 18px;
+
+  max-width: 80%;
+}
+
+/* INPUT */
+.ai-popup-input{
+
+  padding: 15px;
+
+  display: flex;
+  gap: 10px;
+
+  background:
+    rgba(255,255,255,0.08);
+}
+
+/* INPUT BOX */
+.ai-popup-input input{
+
+  flex: 1;
+
+  border: none;
+  outline: none;
+
+  padding: 12px;
+
+  border-radius: 14px;
+
+  background:
+    rgba(255,255,255,0.15);
+
+  color: white;
+}
+
+/* SEND BUTTON */
+.ai-popup-input button{
+
+  border: none;
+
+  padding: 12px 18px;
+
+  border-radius: 14px;
+
+  color: white;
+
+  cursor: pointer;
+
+  background:
+    linear-gradient(
+      45deg,
+      red,
+      orange,
+      yellow,
+      green,
+      cyan,
+      blue,
+      violet
+    );
+
+  background-size: 400% 400%;
+
+  animation: rainbowMove 6s linear infinite;
+}
+
+/* 🌈 ANIMATION */
+@keyframes rainbowMove{
+
+  0%{
+    background-position: 0% 50%;
+  }
+
+  50%{
+    background-position: 100% 50%;
+  }
+
+  100%{
+    background-position: 0% 50%;
+  }
+}
+
+/* MOBILE */
+@media(max-width:768px){
+
+  .ai-popup{
+    width: calc(100% - 30px);
+
+    right: 15px;
+    left: 15px;
+
+    height: 70vh;
+  }
+
+}
