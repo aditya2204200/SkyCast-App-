@@ -1,4 +1,12 @@
-// 🌤️ Dynamic Background + Clouds
+//  NOTIFICATION PERMISSION
+if ("Notification" in window) {
+  Notification.requestPermission().then((permission) => {
+    console.log("Notification Permission:", permission);
+  });
+}
+
+
+//  Dynamic Background + Clouds
 const setDynamicBackground = () => {
   const hour = new Date().getHours();
   const bg = document.querySelector(".bg-fixed");
