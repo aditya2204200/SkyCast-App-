@@ -1,3 +1,5 @@
+
+
 html {
   scroll-behavior: smooth;
 }
@@ -1077,8 +1079,8 @@ body.night-mode .climate-card {
   right: 25px;
   bottom: 110px;
 
-  width: 360px;
-  height: 520px;
+  width: 450px;   
+  height: 80vh;
 
   border-radius: 28px;
 
@@ -1113,8 +1115,8 @@ body.night-mode .climate-card {
 
   animation: rainbowMove 10s linear infinite;
 
-  backdrop-filter: blur(22px);
-  -webkit-backdrop-filter: blur(22px);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
 
   border: 2px solid rgba(255,255,255,0.18);
 
@@ -1131,7 +1133,6 @@ body.night-mode .climate-card {
   transform: translateY(0);
 }
 
-/* 🌈 HEADER */
 .ai-popup-header{
 
   padding: 18px 20px;
@@ -1144,19 +1145,13 @@ body.night-mode .climate-card {
 
   background:
     linear-gradient(
-      90deg,
-      red,
-      orange,
-      yellow,
-      green,
-      cyan,
-      blue,
-      violet
+      135deg,
+      #2193b0,
+      #6dd5ed,
+      #74ebd5
     );
 
-  background-size: 400% 400%;
-
-  animation: rainbowMove 6s linear infinite;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.15);
 }
 
 /* CLOSE BUTTON */
@@ -1185,22 +1180,22 @@ body.night-mode .climate-card {
   gap: 12px;
 }
 
-/* BOT MSG */
 .bot-msg{
   align-self: flex-start;
 
-  background:
-    rgba(255,255,255,0.16);
+  background: rgba(255,255,255,0.16);
 
   color: white;
 
-  padding: 12px 16px;
+  padding: 16px 20px;
 
   border-radius: 18px 18px 18px 5px;
 
-  max-width: 80%;
+  max-width: 92%;
 
-  backdrop-filter: blur(10px);
+  white-space: pre-wrap;
+  line-height: 1.8;
+  font-size: 16px;
 }
 
 /* USER MSG */
@@ -1313,3 +1308,6 @@ body.night-mode .climate-card {
   }
 
 }
+
+
+
