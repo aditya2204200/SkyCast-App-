@@ -24,7 +24,7 @@ self.addEventListener("activate", (event) => {
       await self.clients.claim();
 
       //  SHOW UPDATE NOTIFICATION
-      self.registration.showNotification("SkyCast Updated 🚀", {
+      self.registration.showNotification("SkyCast Updated ", {
         body: "New AI Assistant feature added!",
         icon: "logo.png",
         badge: "logo.png",
