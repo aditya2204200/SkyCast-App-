@@ -5,7 +5,6 @@ if ("Notification" in window) {
   });
 }
 
-
 //  Dynamic Background + Clouds
 const setDynamicBackground = () => {
   const hour = new Date().getHours();
@@ -84,11 +83,10 @@ const getWeatherByCoords = async (lat, lon, cityName) => {
     );
 
     const data = await res.json();
-    
 
-  const rainCodes = [51, 53, 55, 61, 63, 65, 80, 81, 82];
+    const rainCodes = [51, 53, 55, 61, 63, 65, 80, 81, 82];
 
-  const isRaining = rainCodes.includes(data.current_weather.weathercode);
+    const isRaining = rainCodes.includes(data.current_weather.weathercode);
 
     //  ab isRaining use kar
     if (isRaining) {
@@ -330,7 +328,7 @@ if ("serviceWorker" in navigator) {
   navigator.serviceWorker.register("service-worker.js");
 
   navigator.serviceWorker.addEventListener("controllerchange", () => {
-    window.location.reload(); // 🔥 auto reload on update
+    window.location.reload();
   });
 }
 
@@ -471,144 +469,64 @@ window.addEventListener("load", () => {
   });
 });
 
-
-
-
-
-
-
-
-
-// ================= FLOATING AI =================
-
 const openAI = document.getElementById("openAI");
-
 const closeAI = document.getElementById("closeAI");
-
 const aiPopup = document.getElementById("aiPopup");
-
 const askAI = document.getElementById("askAI");
-
 const chatBox = document.getElementById("chatBox");
 
-// OPEN
 openAI.addEventListener("click", () => {
-
   aiPopup.classList.add("show");
-
 });
 
-// CLOSE
 closeAI.addEventListener("click", () => {
-
   aiPopup.classList.remove("show");
-
 });
 
-// SEND MESSAGE
 askAI.addEventListener("click", sendMessage);
 
-// ENTER SUPPORT
 document
-.getElementById("userQuestion")
-.addEventListener("keypress", function(e){
+  .getElementById("userQuestion")
+  .addEventListener("keypress", function (e) {
+    if (e.key === "Enter") {
+      sendMessage();
+    }
+  });
 
-  if(e.key === "Enter"){
-    sendMessage();
-  }
+async function sendMessage() {
+  const input = document.getElementById("userQuestion");
+  const question = input.value.trim();
 
-});
+  if (!question) return;
 
-// FUNCTION
-function sendMessage(){
-
-  const input =
-    document.getElementById("userQuestion");
-
-  const question =
-    input.value.trim();
-
-  if(!question) return;
-
-  // USER MESSAGE
   chatBox.innerHTML += `
-    <div class="user-msg">
-      ${question}
-    </div>
+    <div class="user-msg">${question}</div>
   `;
-
-  // AUTO SCROLL
-  chatBox.scrollTop =
-    chatBox.scrollHeight;
 
   input.value = "";
 
-  // BOT THINKING
-  setTimeout(() => {
+  try {
+    const response = await fetch("http://localhost:3000/chat", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        message: question,
+      }),
+    });
 
-    let reply = "";
+    const data = await response.json();
 
-    const q =
-      question.toLowerCase();
+   const botDiv = document.createElement("div");
+   botDiv.className = "bot-msg";
+   botDiv.textContent = data.reply;
+   chatBox.appendChild(botDiv);
 
-    if(q.includes("rain")){
-
-      reply =
-      " There may be rain today.";
-
-    }
-
-    else if(q.includes("temperature")){
-
-      reply =
-      " Temperature looks moderate today.";
-
-    }
-
-    else if(q.includes("humidity")){
-
-      reply =
-      " Humidity is currently normal.";
-
-    }
-
-    else if(q.includes("wind")){
-
-      reply =
-      " Wind speed is looking stable.";
-
-    }
-
-    else if(q.includes("uv")){
-
-      reply =
-      " UV rays are strong today. Wear sunscreen.";
-
-    }
-
-    else if(q.includes("wear")){
-
-      reply =
-      " Comfortable light clothes are recommended.";
-
-    }
-
-    else{
-
-      reply =
-      " Ask me weather or climate related questions.";
-    }
-
-    // BOT MESSAGE
+    chatBox.scrollTop = chatBox.scrollHeight;
+  } catch (error) {
     chatBox.innerHTML += `
-      <div class="bot-msg">
-        ${reply}
-      </div>
+      <div class="bot-msg">Error connecting AI</div>
     `;
-
-    chatBox.scrollTop =
-      chatBox.scrollHeight;
-
-  }, 700);
-
+  }
 }
