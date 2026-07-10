@@ -66,6 +66,8 @@ html {
 .navbar {
   background: rgba(255, 255, 255, 0.3) !important;
   backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
+  padding: 15px 20px;
 }
 
 /* 🌅 Background images */
@@ -175,15 +177,7 @@ body.night-mode h2 {
 
 
 
-
-/*========================================= For Navbar ======================================*/
-/* 📌 Default navbar */
-.navbar {
-  transition: all 0.3s ease;
-  padding: 15px 20px;
-}
-
-/* 🔽 Shrink state */
+/* Shrink state */
 .navbar.shrink {
   padding: 5px 20px;
   background: rgba(0, 0, 0, 0.7) !important; /* dark glass */
@@ -201,7 +195,7 @@ body.night-mode h2 {
 
 
 /*==========================Usage Guide===============================*/
-/* 🌙 Usage Guide fix (night mode) */
+/*  Usage Guide fix (night mode) */
 body.night-mode #usage .bg-light {
   background: rgba(0, 0, 0, 0.6) !important;
 }
@@ -213,7 +207,7 @@ body.night-mode #usage p {
 
 
 /*=============================Ligktining========================*/
-/* ⚡ Lightning Effect */
+/*  Lightning Effect */
 .lightning {
   position: fixed;
   top: 0;
@@ -244,13 +238,22 @@ body.night-mode #usage p {
 .dynamic-table {
   max-width: 900px;
   margin: 40px auto;
-  padding: 15px;
-  border-radius: 15px;
-}
+  padding: 20px;
 
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 20px;
+
+  box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+}
 /* Table ko clean center look */
 .dynamic-table table {
   margin: auto;
+  width: 100%;
+  background: transparent;
 }
 
 /* Heading spacing fix */
@@ -321,7 +324,7 @@ body.night-mode #usage p {
   animation: popupEnter 0.5s ease, float 3s ease-in-out infinite;
 }
 
-/* ✨ Glow border effect */
+/*  Glow border effect */
 .popup-box::before {
   content: "";
   position: absolute;
@@ -335,7 +338,7 @@ body.night-mode #usage p {
   opacity: 0.6;
 }
 
-/* 🎬 ENTRY ANIMATION */
+/*  ENTRY ANIMATION */
 @keyframes popupEnter {
   from {
     transform: scale(0.7) translateY(40px);
@@ -347,14 +350,14 @@ body.night-mode #usage p {
   }
 }
 
-/* 🌊 FLOATING EFFECT */
+/*  FLOATING EFFECT */
 @keyframes float {
   0% { transform: translateY(0px); }
   50% { transform: translateY(-8px); }
   100% { transform: translateY(0px); }
 }
 
-/* 🎯 TEXT */
+/*  TEXT */
 .popup-box h4 {
   font-weight: 600;
   margin-bottom: 10px;
@@ -365,14 +368,14 @@ body.night-mode #usage p {
   opacity: 0.85;
 }
 
-/* 🔘 BUTTONS */
+/* BUTTONS */
 .popup-actions {
   margin-top: 20px;
   display: flex;
   justify-content: space-between;
 }
 
-/* ✅ Allow Button (Glow) */
+/* Allow Button (Glow) */
 .btn-allow {
   flex: 1;
   margin-right: 8px;
@@ -395,7 +398,7 @@ body.night-mode #usage p {
   box-shadow: 0 0 25px rgba(0, 150, 255, 0.8);
 }
 
-/* ❌ Deny Button */
+/*  Deny Button */
 .btn-deny {
   flex: 1;
 
@@ -1311,3 +1314,98 @@ body.night-mode .climate-card {
 
 
 
+
+
+/* ===== Glass Table ===== */
+
+.dynamic-table .table,
+.dynamic-table .table th,
+.dynamic-table .table td,
+.dynamic-table .table thead,
+.dynamic-table .table tbody,
+.dynamic-table .table tr {
+
+    background: transparent !important;
+    color: white !important;
+}
+.dynamic-table thead th{
+    background: rgba(255,255,255,0.15) !important;
+    backdrop-filter: blur(15px);
+
+    border: 1px solid rgba(255,255,255,.15);
+
+    font-weight: 600;
+}
+.dynamic-table tbody tr{
+
+    background: rgba(255,255,255,0.08);
+
+    transition: all .35s ease;
+
+    border-bottom: 1px solid rgba(255,255,255,.12);
+}
+
+.dynamic-table tbody td{
+
+    padding:18px;
+
+    border-color: rgba(255,255,255,.12);
+
+    vertical-align: middle;
+}
+
+.dynamic-table tbody tr:hover{
+
+    background: rgba(255,255,255,.18);
+
+    transform: scale(1.01);
+
+    box-shadow:
+        0 8px 25px rgba(255,255,255,.12);
+}
+.dynamic-table{
+    position: relative;
+    overflow: hidden;
+}
+
+.dynamic-table::before{
+    content: "";
+    position: absolute;
+    inset: 0;
+
+    border-radius: 20px;
+    border: 1px solid rgba(255,255,255,0.25);
+
+    pointer-events: none;
+}
+
+.dynamic-table::after{
+    content: "";
+    position: absolute;
+    top: -50%;
+    left: -50%;
+
+    width: 200%;
+    height: 200%;
+
+    background: linear-gradient(
+        45deg,
+        transparent,
+        rgba(255,255,255,0.12),
+        transparent
+    );
+
+    transform: rotate(25deg);
+    animation: shine 6s linear infinite;
+
+    pointer-events: none;
+}
+
+@keyframes shine{
+    from{
+        transform: translateX(-100%) rotate(25deg);
+    }
+    to{
+        transform: translateX(100%) rotate(25deg);
+    }
+}
