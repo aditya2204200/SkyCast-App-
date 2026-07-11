@@ -62,7 +62,7 @@ html {
   color: #000;
 }
 
-/* 🌐 Navbar (DAY MODE) */
+/*  Navbar (DAY MODE) */
 .navbar {
   background: rgba(255, 255, 255, 0.3) !important;
   backdrop-filter: blur(10px);
@@ -70,7 +70,7 @@ html {
   padding: 15px 20px;
 }
 
-/* 🌅 Background images */
+/*  Background images */
 .bg-morning {
   background-image: url("images/morning.png");
 }
@@ -88,14 +88,14 @@ html {
 }
 
 /* ========================= */
-/* 🌙 NIGHT MODE START */
+/*  NIGHT MODE START */
 /* ========================= */
 
 body.night-mode {
   color: #ffffff;
 }
 
-/* 🔥 Sab text pure white */
+/* Sab text pure white */
 body.night-mode h1,
 body.night-mode h2,
 body.night-mode h4,
@@ -105,7 +105,7 @@ body.night-mode div {
   color: #ffffff !important;
 }
 
-/* 💎 Cards dark (contrast fix) */
+/*  Cards dark (contrast fix) */
 body.night-mode .card {
   background: rgba(0, 0, 0, 0.7) !important;
   color: #ffffff !important;
@@ -118,7 +118,7 @@ body.night-mode .card-header {
   color: #ffffff !important;
 }
 
-/* 🌐 Navbar dark */
+/* Navbar dark */
 body.night-mode .navbar {
   background: rgba(0, 0, 0, 0.6) !important;
 }
@@ -127,21 +127,21 @@ body.night-mode .navbar a {
   color: #ffffff !important;
 }
 
-/* 🔍 Input fields */
+/*  Input fields */
 body.night-mode input {
   background: rgba(255, 255, 255, 0.15) !important;
   color: #ffffff !important;
   border: 1px solid rgba(255, 255, 255, 0.3);
 }
 
-/* ✨ Heading visibility boost */
+/* Heading visibility boost */
 body.night-mode h1,
 body.night-mode h2 {
   text-shadow: 0 0 10px rgba(255, 255, 255, 0.6);
 }
 
 /* ========================= */
-/* 🌙 NIGHT MODE END */
+/*  NIGHT MODE END */
 /* ========================= */
 
 
@@ -1408,4 +1408,133 @@ body.night-mode .climate-card {
     to{
         transform: translateX(100%) rotate(25deg);
     }
+}
+
+
+body{
+    background:#0d1117;
+}
+
+.card{
+    background:rgba(255,255,255,.08);
+    backdrop-filter:blur(18px);
+    border:1px solid rgba(255,255,255,.15);
+    color:white;
+}
+.analytics-card{
+
+background:rgba(255,255,255,.08);
+
+backdrop-filter:blur(20px);
+
+border:1px solid rgba(255,255,255,.12);
+
+border-radius:20px;
+
+color:white;
+
+}
+
+.weather-tabs{
+
+display:flex;
+
+gap:12px;
+
+margin-bottom:20px;
+
+}
+
+.weather-tabs button{
+
+border:none;
+
+padding:10px 18px;
+
+border-radius:30px;
+
+background:#1e293b;
+
+color:white;
+
+transition:.3s;
+
+}
+
+.weather-tabs button:hover{
+
+background:#2563eb;
+
+}
+
+.weather-tabs .active{
+
+background:#facc15;
+
+color:black;
+
+font-weight:bold;
+
+}
+.chart-wrapper{
+
+position:relative;
+
+width:220px;
+
+height:220px;
+
+margin:auto;
+
+}
+
+.chart-wrapper canvas{
+
+position:absolute;
+
+left:0;
+
+top:0;
+
+}
+
+.chart-center{
+
+position:absolute;
+
+top:50%;
+
+left:50%;
+
+transform:translate(-50%,-50%);
+
+text-align:center;
+
+color:white;
+
+}
+
+.chart-center h3{
+
+margin:0;
+
+font-size:35px;
+
+font-weight:bold;
+
+}
+.weather-btn{
+    background:#1d2942;
+    color:white;
+    transition:.3s;
+}
+
+.weather-btn.active{
+    background:#ffc107;
+    color:black;
+}
+#overviewChart{
+    width:220px !important;
+    height:220px !important;
+    display:block;
 }
