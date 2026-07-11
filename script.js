@@ -77,11 +77,13 @@ const createLightning = () => {
 const getWeatherByCoords = async (lat, lon, cityName) => {
   try {
     setDynamicBackground();
-
-    const res = await fetch(
-      `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true&hourly=relativehumidity_2m&daily=temperature_2m_max,temperature_2m_min,uv_index_max&timezone=auto`,
-    );
-
+const res = await fetch(
+  `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}
+  &current_weather=true
+  &hourly=relativehumidity_2m
+  &daily=temperature_2m_max,temperature_2m_min,precipitation_sum,windspeed_10m_max,uv_index_max
+  &timezone=auto`,
+);
     const data = await res.json();
 
     const rainCodes = [51, 53, 55, 61, 63, 65, 80, 81, 82];
@@ -192,6 +194,7 @@ const getWeatherByCoords = async (lat, lon, cityName) => {
     } else {
       document.getElementById("cloudText").innerText = "Cloudy";
     }
+    loadClimateData(lat, lon);
 
     document.getElementById("errorMsg").innerText = "";
   } catch {
@@ -529,4 +532,101 @@ async function sendMessage() {
       <div class="bot-msg">Error connecting AI</div>
     `;
   }
+}
+
+// ================= Climate Analytics =================
+
+let weatherChart;
+
+async function loadClimateData(lat, lon) {
+
+  const res = await fetch(
+    `https://archive-api.open-meteo.com/v1/archive?latitude=${lat}&longitude=${lon}&start_date=2025-01-01&end_date=2025-12-31&daily=temperature_2m_max,temperature_2m_min&timezone=auto`
+  );
+
+  const data = await res.json();
+
+  const maxMonthly = Array(12).fill(0);
+  const minMonthly = Array(12).fill(0);
+  const count = Array(12).fill(0);
+
+  data.daily.time.forEach((date, i) => {
+
+    const month = new Date(date).getMonth();
+
+    maxMonthly[month] += data.daily.temperature_2m_max[i];
+    minMonthly[month] += data.daily.temperature_2m_min[i];
+
+    count[month]++;
+
+  });
+
+  for(let i=0;i<12;i++){
+
+      maxMonthly[i] /= count[i];
+      minMonthly[i] /= count[i];
+
+  }
+
+  if(weatherChart){
+
+      weatherChart.destroy();
+
+  }
+
+  const ctx=document.getElementById("weatherChart");
+
+  weatherChart=new Chart(ctx,{
+
+      type:"line",
+
+      data:{
+
+          labels:["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"],
+
+          datasets:[
+
+          {
+              label:"Max Temp",
+              data:maxMonthly,
+              borderColor:"#ff4d4d",
+              backgroundColor:"rgba(255,77,77,.2)",
+              fill:true,
+              tension:.4
+          },
+
+          {
+              label:"Min Temp",
+              data:minMonthly,
+              borderColor:"#3b82f6",
+              backgroundColor:"rgba(59,130,246,.15)",
+              fill:true,
+              tension:.4
+          }
+
+          ]
+
+      },
+
+      options:{
+          responsive:true,
+          plugins:{
+              legend:{
+                  labels:{color:"white"}
+              }
+          },
+          scales:{
+              x:{
+                  ticks:{color:"white"},
+                  grid:{color:"rgba(255,255,255,.08)"}
+              },
+              y:{
+                  ticks:{color:"white"},
+                  grid:{color:"rgba(255,255,255,.08)"}
+              }
+          }
+      }
+
+  });
+
 }
