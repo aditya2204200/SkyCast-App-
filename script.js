@@ -71,24 +71,21 @@ const createLightning = () => {
   container.appendChild(flash);
 
   setTimeout(() => flash.remove(), 200);
+  askAI;
 };
 
 //  Weather API
 const getWeatherByCoords = async (lat, lon, cityName) => {
   try {
     setDynamicBackground();
-const res = await fetch(
-  `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}
-  &current_weather=true
-  &hourly=relativehumidity_2m
-  &daily=temperature_2m_max,temperature_2m_min,precipitation_sum,windspeed_10m_max,uv_index_max
-  &timezone=auto`,
-);
+    const res = await fetch(
+      `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,apparent_temperature,pressure_msl,wind_speed_10m,weather_code&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,wind_speed_10m_max,uv_index_max&timezone=auto`,
+    );
     const data = await res.json();
 
     const rainCodes = [51, 53, 55, 61, 63, 65, 80, 81, 82];
 
-    const isRaining = rainCodes.includes(data.current_weather.weathercode);
+    const isRaining = rainCodes.includes(data.current.weather_code);
 
     //  ab isRaining use kar
     if (isRaining) {
@@ -109,7 +106,7 @@ const res = await fetch(
         .bindPopup(
           `
        ${cityName} <br>
-       ${data.current_weather.temperature}°C
+       ${data.current.temperature_2m}°C
     `,
         )
         .openPopup();
@@ -120,7 +117,7 @@ const res = await fetch(
       `<i class="bi bi-geo-alt-fill"></i> ${cityName}`;
 
     document.getElementById("temp").innerText =
-      data.current_weather.temperature + " °C";
+      data.current.temperature_2m + " °C";
 
     document.getElementById("min_temp").innerText =
       data.daily.temperature_2m_min[0] + " °C";
@@ -128,27 +125,19 @@ const res = await fetch(
     document.getElementById("max_temp").innerText =
       data.daily.temperature_2m_max[0] + " °C";
     document.getElementById("detailWind").innerText =
-      data.current_weather.windspeed;
+      data.current.wind_speed_10m;
     // compass update
-    updateWindUI(data.current_weather.winddirection);
-    console.log("Wind Degree:", data.current_weather.winddirection);
+    updateWindUI(data.current.wind_direction_10m);
+    console.log("Wind Degree:", data.current.wind_direction_10m);
 
-    const currentTime = new Date(data.current_weather.time);
+    const currentTime = new Date(data.current.time);
 
     // find closest time index
-    let closestIndex = 0;
-    let minDiff = Infinity;
-
-    data.hourly.time.forEach((t, index) => {
-      const diff = Math.abs(new Date(t) - currentTime);
-      if (diff < minDiff) {
-        minDiff = diff;
-        closestIndex = index;
-      }
-    });
+    document.getElementById("humidity").innerText =
+      data.current.relative_humidity_2m + " %";
 
     document.getElementById("humidity").innerText =
-      data.hourly.relativehumidity_2m[closestIndex] + " %";
+      data.current.relative_humidity_2m + " %";
 
     //  REAL UV INDEX
     const uv = data.daily.uv_index_max[0];
@@ -176,18 +165,18 @@ const res = await fetch(
     //  DETAILS SECTION UPDATE
 
     document.getElementById("detailTemp").innerText =
-      data.current_weather.temperature + "°";
+      data.current.temperature_2m + "°";
 
     document.getElementById("detailFeels").innerText =
-      data.current_weather.temperature + 4 + "°";
+      data.current.apparent_temperature + "°";
 
     document.getElementById("detailActual").innerText =
-      data.current_weather.temperature + "°";
+      data.current.temperature_2m + "°";
 
     document.getElementById("detailHumidity").innerText =
-      data.hourly.relativehumidity_2m[closestIndex] + "%";
+      data.current.relative_humidity_2m + "%";
 
-    const weatherCode = data.current_weather.weathercode;
+    const weatherCode = data.current.weather_code;
 
     if (weatherCode <= 3) {
       document.getElementById("cloudText").innerText = "Sunny";
@@ -197,8 +186,9 @@ const res = await fetch(
     loadClimateData(lat, lon);
 
     document.getElementById("errorMsg").innerText = "";
-  } catch {
-    document.getElementById("errorMsg").innerText = "⚠️ Weather error";
+  } catch (err) {
+    console.error(err);
+    document.getElementById("errorMsg").innerText = err.message;
   }
 };
 
@@ -252,16 +242,17 @@ const loadCommonPlaces = async () => {
       const { latitude, longitude, name } = g.results[0];
 
       const res = await fetch(
-        `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current_weather=true`,
+        `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current=temperature_2m,wind_speed_10m`,
       );
+
       const d = await res.json();
 
       table.innerHTML += `
-        <tr>
-          <td>${name}</td>
-          <td>${d.current_weather.temperature}</td>
-          <td>${d.current_weather.windspeed}</td>
-        </tr>`;
+<tr>
+  <td>${name}</td>
+  <td>${d.current.temperature_2m} °C</td>
+  <td>${d.current.wind_speed_10m} km/h</td>
+</tr>`;
     } catch {}
   }
 };
@@ -521,10 +512,10 @@ async function sendMessage() {
 
     const data = await response.json();
 
-   const botDiv = document.createElement("div");
-   botDiv.className = "bot-msg";
-   botDiv.textContent = data.reply;
-   chatBox.appendChild(botDiv);
+    const botDiv = document.createElement("div");
+    botDiv.className = "bot-msg";
+    botDiv.textContent = data.reply;
+    chatBox.appendChild(botDiv);
 
     chatBox.scrollTop = chatBox.scrollHeight;
   } catch (error) {
@@ -539,9 +530,8 @@ async function sendMessage() {
 let weatherChart;
 
 async function loadClimateData(lat, lon) {
-
   const res = await fetch(
-    `https://archive-api.open-meteo.com/v1/archive?latitude=${lat}&longitude=${lon}&start_date=2025-01-01&end_date=2025-12-31&daily=temperature_2m_max,temperature_2m_min&timezone=auto`
+    `https://archive-api.open-meteo.com/v1/archive?latitude=${lat}&longitude=${lon}&start_date=2025-01-01&end_date=2025-12-31&daily=temperature_2m_max,temperature_2m_min&timezone=auto`,
   );
 
   const data = await res.json();
@@ -551,82 +541,82 @@ async function loadClimateData(lat, lon) {
   const count = Array(12).fill(0);
 
   data.daily.time.forEach((date, i) => {
-
     const month = new Date(date).getMonth();
 
     maxMonthly[month] += data.daily.temperature_2m_max[i];
     minMonthly[month] += data.daily.temperature_2m_min[i];
 
     count[month]++;
-
   });
 
-  for(let i=0;i<12;i++){
-
-      maxMonthly[i] /= count[i];
-      minMonthly[i] /= count[i];
-
+  for (let i = 0; i < 12; i++) {
+    maxMonthly[i] /= count[i];
+    minMonthly[i] /= count[i];
   }
 
-  if(weatherChart){
-
-      weatherChart.destroy();
-
+  if (weatherChart) {
+    weatherChart.destroy();
   }
 
-  const ctx=document.getElementById("weatherChart");
+  const ctx = document.getElementById("weatherChart");
 
-  weatherChart=new Chart(ctx,{
+  weatherChart = new Chart(ctx, {
+    type: "line",
 
-      type:"line",
+    data: {
+      labels: [
+        "Jan",
+        "Feb",
+        "Mar",
+        "Apr",
+        "May",
+        "Jun",
+        "Jul",
+        "Aug",
+        "Sep",
+        "Oct",
+        "Nov",
+        "Dec",
+      ],
 
-      data:{
+      datasets: [
+        {
+          label: "Max Temp",
+          data: maxMonthly,
+          borderColor: "#ff4d4d",
+          backgroundColor: "rgba(255,77,77,.2)",
+          fill: true,
+          tension: 0.4,
+        },
 
-          labels:["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"],
+        {
+          label: "Min Temp",
+          data: minMonthly,
+          borderColor: "#3b82f6",
+          backgroundColor: "rgba(59,130,246,.15)",
+          fill: true,
+          tension: 0.4,
+        },
+      ],
+    },
 
-          datasets:[
-
-          {
-              label:"Max Temp",
-              data:maxMonthly,
-              borderColor:"#ff4d4d",
-              backgroundColor:"rgba(255,77,77,.2)",
-              fill:true,
-              tension:.4
-          },
-
-          {
-              label:"Min Temp",
-              data:minMonthly,
-              borderColor:"#3b82f6",
-              backgroundColor:"rgba(59,130,246,.15)",
-              fill:true,
-              tension:.4
-          }
-
-          ]
-
+    options: {
+      responsive: true,
+      plugins: {
+        legend: {
+          labels: { color: "white" },
+        },
       },
-
-      options:{
-          responsive:true,
-          plugins:{
-              legend:{
-                  labels:{color:"white"}
-              }
-          },
-          scales:{
-              x:{
-                  ticks:{color:"white"},
-                  grid:{color:"rgba(255,255,255,.08)"}
-              },
-              y:{
-                  ticks:{color:"white"},
-                  grid:{color:"rgba(255,255,255,.08)"}
-              }
-          }
-      }
-
+      scales: {
+        x: {
+          ticks: { color: "white" },
+          grid: { color: "rgba(255,255,255,.08)" },
+        },
+        y: {
+          ticks: { color: "white" },
+          grid: { color: "rgba(255,255,255,.08)" },
+        },
+      },
+    },
   });
-
 }
